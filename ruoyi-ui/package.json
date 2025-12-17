@@ -1,7 +1,7 @@
 {
   "name": "ruoyi",
   "version": "3.9.0",
-  "description": "若依管理系统",
+  "description": "雅藏物流",
   "author": "若依",
   "license": "MIT",
   "scripts": {
@@ -35,6 +35,7 @@
     "highlight.js": "9.18.5",
     "js-beautify": "1.13.0",
     "js-cookie": "3.0.1",
+    "jsbarcode": "^3.12.1",
     "jsencrypt": "3.0.0-rc.1",
     "nprogress": "0.2.0",
     "quill": "2.0.2",

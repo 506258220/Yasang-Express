@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.express.mapper.ExpressWaybillMapper">
+    
+    <resultMap type="ExpressWaybill" id="ExpressWaybillResult">
+        <result property="waybillId"    column="waybill_id"    />
+        <result property="waybillNo"    column="waybill_no"    />
+        <result property="orderId"    column="order_id"    />
+        <result property="orderNo"    column="order_no"    />
+        <result property="templateId"    column="template_id"    />
+        <result property="expressType"    column="express_type"    />
+        <result property="sendDate"    column="send_date"    />
+        <result property="goodsType"    column="goods_type"    />
+        <result property="consignee"    column="consignee"    />
+        <result property="consigneePhone"    column="consignee_phone"    />
+        <result property="consigneeAddress"    column="consignee_address"    />
+        <result property="weight"    column="weight"    />
+        <result property="quantity"    column="quantity"    />
+        <result property="remarks"    column="remarks"    />
+        <result property="status"    column="status"    />
+        <result property="printBy"    column="print_by"    />
+        <result property="printTime"    column="print_time"    />
+        <result property="printCount"    column="print_count"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectExpressWaybillVo">
+        select waybill_id, waybill_no, order_id, order_no, template_id, express_type, send_date, goods_type, consignee, consignee_phone, consignee_address, weight, quantity, remarks, status, print_by, print_time, print_count, create_by, create_time, update_by, update_time, del_flag from express_waybill
+    </sql>
+
+    <select id="selectExpressWaybillList" parameterType="ExpressWaybill" resultMap="ExpressWaybillResult">
+        <include refid="selectExpressWaybillVo"/>
+        <where>  
+            <if test="waybillNo != null  and waybillNo != ''"> and waybill_no like concat('%', #{waybillNo}, '%')</if>
+            <if test="orderId != null "> and order_id like concat('%', #{orderId}, '%')</if>
+            <if test="orderNo != null  and orderNo != ''"> and order_no like concat('%', #{orderNo}, '%')</if>
+            <if test="sendDate != null "> and send_date = #{sendDate}</if>
+            <if test="consignee != null  and consignee != ''"> and consignee = #{consignee}</if>
+            <if test="consigneePhone != null  and consigneePhone != ''"> and consignee_phone = #{consigneePhone}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectExpressWaybillByWaybillId" parameterType="Long" resultMap="ExpressWaybillResult">
+        <include refid="selectExpressWaybillVo"/>
+        where waybill_id = #{waybillId}
+    </select>
+
+    <insert id="insertExpressWaybill" parameterType="ExpressWaybill" useGeneratedKeys="true" keyProperty="waybillId">
+        insert into express_waybill
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="waybillNo != null and waybillNo != ''">waybill_no,</if>
+            <if test="orderId != null">order_id,</if>
+            <if test="orderNo != null">order_no,</if>
+            <if test="templateId != null">template_id,</if>
+            <if test="expressType != null and expressType != ''">express_type,</if>
+            <if test="sendDate != null">send_date,</if>
+            <if test="goodsType != null">goods_type,</if>
+            <if test="consignee != null and consignee != ''">consignee,</if>
+            <if test="consigneePhone != null and consigneePhone != ''">consignee_phone,</if>
+            <if test="consigneeAddress != null and consigneeAddress != ''">consignee_address,</if>
+            <if test="weight != null">weight,</if>
+            <if test="quantity != null">quantity,</if>
+            <if test="remarks != null">remarks,</if>
+            <if test="status != null">status,</if>
+            <if test="printBy != null">print_by,</if>
+            <if test="printTime != null">print_time,</if>
+            <if test="printCount != null">print_count,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="waybillNo != null and waybillNo != ''">#{waybillNo},</if>
+            <if test="orderId != null">#{orderId},</if>
+            <if test="orderNo != null">#{orderNo},</if>
+            <if test="templateId != null">#{templateId},</if>
+            <if test="expressType != null and expressType != ''">#{expressType},</if>
+            <if test="sendDate != null">#{sendDate},</if>
+            <if test="goodsType != null">#{goodsType},</if>
+            <if test="consignee != null and consignee != ''">#{consignee},</if>
+            <if test="consigneePhone != null and consigneePhone != ''">#{consigneePhone},</if>
+            <if test="consigneeAddress != null and consigneeAddress != ''">#{consigneeAddress},</if>
+            <if test="weight != null">#{weight},</if>
+            <if test="quantity != null">#{quantity},</if>
+            <if test="remarks != null">#{remarks},</if>
+            <if test="status != null">#{status},</if>
+            <if test="printBy != null">#{printBy},</if>
+            <if test="printTime != null">#{printTime},</if>
+            <if test="printCount != null">#{printCount},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateExpressWaybill" parameterType="ExpressWaybill">
+        update express_waybill
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="waybillNo != null and waybillNo != ''">waybill_no = #{waybillNo},</if>
+            <if test="orderId != null">order_id = #{orderId},</if>
+            <if test="orderNo != null">order_no = #{orderNo},</if>
+            <if test="templateId != null">template_id = #{templateId},</if>
+            <if test="expressType != null and expressType != ''">express_type = #{expressType},</if>
+            <if test="sendDate != null">send_date = #{sendDate},</if>
+            <if test="goodsType != null">goods_type = #{goodsType},</if>
+            <if test="consignee != null and consignee != ''">consignee = #{consignee},</if>
+            <if test="consigneePhone != null and consigneePhone != ''">consignee_phone = #{consigneePhone},</if>
+            <if test="consigneeAddress != null and consigneeAddress != ''">consignee_address = #{consigneeAddress},</if>
+            <if test="weight != null">weight = #{weight},</if>
+            <if test="quantity != null">quantity = #{quantity},</if>
+            <if test="remarks != null">remarks = #{remarks},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="printBy != null">print_by = #{printBy},</if>
+            <if test="printTime != null">print_time = #{printTime},</if>
+            <if test="printCount != null">print_count = #{printCount},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where waybill_id = #{waybillId}
+    </update>
+
+    <delete id="deleteExpressWaybillByWaybillId" parameterType="Long">
+        delete from express_waybill where waybill_id = #{waybillId}
+    </delete>
+
+    <delete id="deleteExpressWaybillByWaybillIds" parameterType="String">
+        delete from express_waybill where waybill_id in 
+        <foreach item="waybillId" collection="array" open="(" separator="," close=")">
+            #{waybillId}
+        </foreach>
+    </delete>
+</mapper>

@@ -42,3 +42,20 @@ export function delOrder(orderId) {
     method: 'delete'
   })
 }
+
+// 导入订单管理
+export function importOrder(data) {
+  return request({
+    url: '/express/order/importData',
+    method: 'post',
+    data: data
+  })
+}
+
+// 下载导入模板
+export function importTemplate() {
+  return request({
+    url: '/express/order/importTemplate',
+    method: 'get'
+  })
+}

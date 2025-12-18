@@ -21,20 +21,20 @@ public class ExpressOrder extends BaseEntity
     /** 订单ID */
     private Long orderId;
 
-    /** 订单编号（唯一） */
-    @Excel(name = "订单编号", readConverterExp = "唯=一")
+    /** 订单号（唯一） */
+    @Excel(name = "订单号")
     private String orderNo;
 
-    /** 支付方式（微信/支付宝/现金/到付） */
-    @Excel(name = "支付方式", readConverterExp = "微=信/支付宝/现金/到付")
+    /** 支付方式（0=微信支付,1=余额支付） */
+    @Excel(name = "支付方式",readConverterExp = "0=微信支付,1=余额支付")
     private String payType;
 
-    /** 支付渠道（微信公众号/支付宝APP/线下） */
-    @Excel(name = "支付渠道", readConverterExp = "微=信公众号/支付宝APP/线下")
+    /** 支付渠道（0=小程序,1=余额） */
+    @Excel(name = "支付渠道",readConverterExp = "0=小程序,1=余额")
     private String payChannel;
 
-    /** 订单状态（0待支付 1已支付 2已取消 3已完成） */
-    @Excel(name = "订单状态", readConverterExp = "0=待支付,1=已支付,2=已取消,3=已完成")
+    /** 支付状态（0待支付 1已支付 2已取消 3已完成） */
+    @Excel(name = "支付状态", readConverterExp = "0=待支付,1=已支付,2=已取消,3=已完成")
     private String orderStatus;
 
     /** 退款状态（0未退款 1退款中 2已退款） */
@@ -42,11 +42,11 @@ public class ExpressOrder extends BaseEntity
     private String refundStatus;
 
     /** 商品信息（JSON格式：[{"name":"商品1","num":1,"price":10.00}]） */
-    @Excel(name = "商品信息", readConverterExp = "J=SON格式：[{\"name\":\"商品1\",\"num\":1,\"price\":10.00}]")
+    @Excel(name = "商品信息")
     private String goodsInfo;
 
-    /** 收货人姓名 */
-    @Excel(name = "收货人姓名")
+    /** 收货人 */
+    @Excel(name = "收货人")
     private String consignee;
 
     /** 收货电话 */
@@ -54,7 +54,7 @@ public class ExpressOrder extends BaseEntity
     private String consigneePhone;
 
     /** 收货地址（省+市+区+详细地址） */
-    @Excel(name = "收货地址", readConverterExp = "省=+市+区+详细地址")
+    @Excel(name = "收货地址")
     private String consigneeAddress;
 
     /** 用户备注 */
@@ -65,8 +65,8 @@ public class ExpressOrder extends BaseEntity
     @Excel(name = "商户备注")
     private String merchantRemark;
 
-    /** 订单金额 */
-    @Excel(name = "订单金额")
+    /** 实际支付金额 */
+    @Excel(name = "实际支付金额")
     private BigDecimal orderAmount;
 
     /** 支付时间 */

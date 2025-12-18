@@ -18,12 +18,15 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.express.domain.ExpressWaybill;
 import com.ruoyi.express.service.IExpressWaybillService;
+import com.ruoyi.express.service.impl.PdfWaybillGeneratorService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 快递单Controller
- * 
+ *
  * @author ruoyi
  * @date 2025-12-17
  */
@@ -33,6 +36,9 @@ public class ExpressWaybillController extends BaseController
 {
     @Autowired
     private IExpressWaybillService expressWaybillService;
+
+    @Autowired
+    private PdfWaybillGeneratorService pdfWaybillGeneratorService;
 
     /**
      * 查询快递单列表
@@ -100,5 +106,30 @@ public class ExpressWaybillController extends BaseController
     public AjaxResult remove(@PathVariable Long[] waybillIds)
     {
         return toAjax(expressWaybillService.deleteExpressWaybillByWaybillIds(waybillIds));
+    }
+
+    /**
+     * 生成快递单PDF
+     */
+    @PreAuthorize("@ss.hasPermi('express:waybill:print')")
+    @PostMapping("/generatePdf/{waybillId}/{templateId}")
+    public void generatePdf(@PathVariable Long waybillId, @PathVariable Long templateId, HttpServletResponse response)
+    {
+        try {
+            // 生成PDF字节数组
+            byte[] pdfBytes = pdfWaybillGeneratorService.generateWaybillPdf(waybillId, templateId);
+
+            // 设置响应头
+            response.setContentType("application/pdf");
+            response.setContentLength(pdfBytes.length);
+            response.setHeader("Content-Disposition", "attachment; filename=waybill_" + waybillId + ".pdf");
+
+            // 写入响应流
+            response.getOutputStream().write(pdfBytes);
+            response.getOutputStream().flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
     }
 }

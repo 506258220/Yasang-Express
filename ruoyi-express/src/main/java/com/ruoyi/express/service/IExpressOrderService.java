@@ -58,4 +58,20 @@ public interface IExpressOrderService
      * @return 结果
      */
     public int deleteExpressOrderByOrderId(Long orderId);
+    
+    /**
+     * 批量导入订单管理
+     * 
+     * @param expressOrderList 订单管理列表
+     * @return 结果
+     */
+    public int batchInsertExpressOrder(List<ExpressOrder> expressOrderList);
+    
+    /**
+     * 根据订单号查询订单管理
+     * 
+     * @param orderNo 订单号
+     * @return 订单管理
+     */
+    public ExpressOrder selectExpressOrderByOrderNo(String orderNo);
 }

@@ -9,18 +9,10 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="关联订单ID" prop="orderId">
-        <el-input
-          v-model="queryParams.orderId"
-          placeholder="请输入关联订单ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="关联订单编号" prop="orderNo">
+      <el-form-item label="订单编号" prop="orderNo">
         <el-input
           v-model="queryParams.orderNo"
-          placeholder="请输入关联订单编号"
+          placeholder="请输入订单编号"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -33,10 +25,10 @@
           placeholder="请选择寄件日期">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="收货人姓名" prop="consignee">
+      <el-form-item label="收货人" prop="consignee">
         <el-input
           v-model="queryParams.consignee"
-          placeholder="请输入收货人姓名"
+          placeholder="请输入收货人"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -115,17 +107,20 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="快递单ID" align="center" prop="waybillId" />
       <el-table-column label="快递单号" align="center" prop="waybillNo" />
-      <el-table-column label="关联订单ID" align="center" prop="orderId" />
-      <el-table-column label="关联订单编号" align="center" prop="orderNo" />
-      <el-table-column label="关联模板ID" align="center" prop="templateId" />
-      <el-table-column label="快递类型" align="center" prop="expressType" />
+      <el-table-column label="订单编号" align="center" prop="orderNo" />
+<!--      <el-table-column label="关联模板ID" align="center" prop="templateId" />-->
+      <el-table-column label="快递类型" align="center" prop="expressType" >
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.express_waybill_type" :value="scope.row.expressType"/>
+        </template>
+      </el-table-column>
       <el-table-column label="寄件日期" align="center" prop="sendDate" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.sendDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="物品类型" align="center" prop="goodsType" />
-      <el-table-column label="收货人姓名" align="center" prop="consignee" />
+      <el-table-column label="收货人" align="center" prop="consignee" />
       <el-table-column label="收货电话" align="center" prop="consigneePhone" />
       <el-table-column label="收货地址" align="center" prop="consigneeAddress" />
       <el-table-column label="重量(kg)" align="center" prop="weight" />
@@ -137,12 +132,12 @@
         </template>
       </el-table-column>
       <el-table-column label="打印人" align="center" prop="printBy" />
-      <el-table-column label="打印时间" align="center" prop="printTime" width="180">
+      <el-table-column label="打印时间" align="center" prop="printTime" width="100">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.printTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="打印次数" align="center" prop="printCount" />
+      <el-table-column label="打印次数" align="center" prop="printCount" width="80" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -155,6 +150,13 @@
           <el-button
             size="mini"
             type="text"
+            icon="el-icon-printer"
+            @click="handlePrint(scope.row)"
+            v-hasPermi="['express:waybill:print']"
+          >打印</el-button>
+          <el-button
+            size="mini"
+            type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['express:waybill:remove']"
@@ -162,7 +164,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -177,11 +179,8 @@
         <el-form-item label="快递单号" prop="waybillNo">
           <el-input v-model="form.waybillNo" placeholder="请输入快递单号" />
         </el-form-item>
-        <el-form-item label="关联订单ID" prop="orderId">
-          <el-input v-model="form.orderId" placeholder="请输入关联订单ID" />
-        </el-form-item>
-        <el-form-item label="关联订单编号" prop="orderNo">
-          <el-input v-model="form.orderNo" placeholder="请输入关联订单编号" />
+        <el-form-item label="订单编号" prop="orderNo">
+          <el-input v-model="form.orderNo" placeholder="请输入订单编号" />
         </el-form-item>
         <el-form-item label="寄件日期" prop="sendDate">
           <el-date-picker clearable
@@ -191,8 +190,8 @@
             placeholder="请选择寄件日期">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="收货人姓名" prop="consignee">
-          <el-input v-model="form.consignee" placeholder="请输入收货人姓名" />
+        <el-form-item label="收货人" prop="consignee">
+          <el-input v-model="form.consignee" placeholder="请输入收货人" />
         </el-form-item>
         <el-form-item label="收货电话" prop="consigneePhone">
           <el-input v-model="form.consigneePhone" placeholder="请输入收货电话" />
@@ -209,36 +208,36 @@
         <el-form-item label="备注信息" prop="remarks">
           <el-input v-model="form.remarks" placeholder="请输入备注信息" />
         </el-form-item>
-        <el-form-item label="快递状态" prop="status">
-          <el-radio-group v-model="form.status">
-            <el-radio
-              v-for="dict in dict.type.print_status"
-              :key="dict.value"
-              :label="dict.value"
-            >{{dict.label}}</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="打印人" prop="printBy">
-          <el-input v-model="form.printBy" placeholder="请输入打印人" />
-        </el-form-item>
-        <el-form-item label="打印时间" prop="printTime">
-          <el-date-picker clearable
-            v-model="form.printTime"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择打印时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="打印次数" prop="printCount">
-          <el-input v-model="form.printCount" placeholder="请输入打印次数" />
-        </el-form-item>
-        <el-form-item label="删除标志" prop="delFlag">
-          <el-input v-model="form.delFlag" placeholder="请输入删除标志" />
-        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 打印快递单对话框 -->
+    <el-dialog
+      title="打印快递单"
+      :visible.sync="printDialogVisible"
+      width="800px"
+      append-to-body
+    >
+      <div class="print-dialog-content">
+        <div class="print-preview-area">
+          <!-- 使用快递单预览组件 -->
+          <express-waybill-preview
+            :preview-visible="printPreviewVisible"
+            :fields-config="printFieldsConfig"
+            :print-config="printConfig"
+            :preview-data="printWaybillData"
+            :waybill-style="{ fontSize: printConfig.fontSize + 'px', padding: '10px', height: '100%' }"
+          />
+        </div>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="closePrintDialog">取消</el-button>
+        <el-button type="primary" @click="downloadPdf">下载PDF</el-button>
+        <el-button type="success" @click="doPrint">打印</el-button>
       </div>
     </el-dialog>
   </div>
@@ -246,10 +245,12 @@
 
 <script>
 import { listWaybill, getWaybill, delWaybill, addWaybill, updateWaybill } from "@/api/express/waybill"
+import ExpressWaybillPreview from '@/components/ExpressWaybillPreview/index'
 
 export default {
   name: "Waybill",
-  dicts: ['print_status'],
+  components: { ExpressWaybillPreview },
+  dicts: ['print_status','express_waybill_type'],
   data() {
     return {
       // 遮罩层
@@ -299,7 +300,7 @@ export default {
           { required: true, message: "寄件日期不能为空", trigger: "blur" }
         ],
         consignee: [
-          { required: true, message: "收货人姓名不能为空", trigger: "blur" }
+          { required: true, message: "收货人不能为空", trigger: "blur" }
         ],
         consigneePhone: [
           { required: true, message: "收货电话不能为空", trigger: "blur" }
@@ -307,7 +308,14 @@ export default {
         consigneeAddress: [
           { required: true, message: "收货地址不能为空", trigger: "blur" }
         ],
-      }
+      },
+      // 打印相关参数
+      printDialogVisible: false, // 打印对话框可见性
+      printWaybillData: {}, // 当前要打印的快递单数据
+      printPreviewVisible: true, // 预览组件显示状态
+      printFieldsConfig: ['waybillNo', 'consignee', 'phone', 'address', 'goodsInfo', 'weight', 'orderNo'], // 预览字段配置
+      printConfig: { fontSize: 12 }, // 打印配置
+      selectedPrintRow: null // 当前选中的打印行数据
     }
   },
   created() {
@@ -424,6 +432,55 @@ export default {
       this.download('express/waybill/export', {
         ...this.queryParams
       }, `waybill_${new Date().getTime()}.xlsx`)
+    },
+    /** 打印按钮操作 */
+    handlePrint(row) {
+      // 保存选中的行数据
+      this.selectedPrintRow = row
+      
+      // 设置打印数据，将row数据转换为预览组件需要的格式
+      this.printWaybillData = {
+        waybillNo: row.waybillNo,
+        orderNo: row.orderNo,
+        consignee: row.consignee,
+        phone: row.consigneePhone,
+        address: row.consigneeAddress,
+        goodsInfo: row.goodsType,
+        weight: row.weight,
+        // 寄件人信息（这里可以根据实际情况调整）
+        senderName: '系统默认寄件人',
+        senderPhone: '4008111111',
+        senderAddress: '系统默认寄件地址'
+      }
+      // 打开打印对话框
+      this.printDialogVisible = true
+      this.printPreviewVisible = true
+    },
+    /** 关闭打印对话框 */
+    closePrintDialog() {
+      this.printDialogVisible = false
+      this.printPreviewVisible = false
+      this.printWaybillData = {}
+    },
+    /** 执行打印操作 */
+    doPrint() {
+      // 这里可以添加打印相关的逻辑，例如调用浏览器打印功能
+      window.print()
+    },
+    /** 下载PDF快递单 */
+    downloadPdf() {
+      // 获取当前要打印的快递单ID（从表格行数据中获取）
+      const waybillId = this.selectedPrintRow.waybillId
+      // 使用默认模板ID（这里可以根据实际情况调整）
+      const templateId = 1
+      
+      // 构造下载URL
+      const url = `/express/waybill/generatePdf/${waybillId}/${templateId}`
+      
+      // 发起下载请求
+      this.download(url, {}, `waybill_${waybillId}_${new Date().getTime()}.pdf`)
+      // 关闭打印对话框
+      this.closePrintDialog()
     }
   }
 }

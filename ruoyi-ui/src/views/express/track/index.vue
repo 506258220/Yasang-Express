@@ -1,10 +1,10 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="关联快递单号" prop="waybillNo">
+      <el-form-item label="快递单号" prop="waybillNo">
         <el-input
           v-model="queryParams.waybillNo"
-          placeholder="请输入关联快递单号"
+          placeholder="请输入快递单号"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -12,7 +12,7 @@
       <el-form-item label="轨迹状态" prop="trackStatus">
         <el-select v-model="queryParams.trackStatus" placeholder="请选择轨迹状态" clearable>
           <el-option
-            v-for="dict in dict.type.order_status"
+            v-for="dict in dict.type.express_track_status"
             :key="dict.value"
             :label="dict.label"
             :value="dict.value"
@@ -74,10 +74,10 @@
     <el-table v-loading="loading" :data="trackList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="轨迹ID" align="center" prop="trackId" />
-      <el-table-column label="关联快递单号" align="center" prop="waybillNo" />
+      <el-table-column label="快递单号" align="center" prop="waybillNo" />
       <el-table-column label="轨迹状态" align="center" prop="trackStatus">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.order_status" :value="scope.row.trackStatus"/>
+          <dict-tag :options="dict.type.express_track_status" :value="scope.row.trackStatus"/>
         </template>
       </el-table-column>
       <el-table-column label="轨迹描述" align="center" prop="trackDesc" />
@@ -106,7 +106,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -118,13 +118,13 @@
     <!-- 添加或修改物流轨迹对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="关联快递单号" prop="waybillNo">
-          <el-input v-model="form.waybillNo" placeholder="请输入关联快递单号" />
+        <el-form-item label="快递单号" prop="waybillNo">
+          <el-input v-model="form.waybillNo" placeholder="请输入快递单号" />
         </el-form-item>
         <el-form-item label="轨迹状态" prop="trackStatus">
           <el-radio-group v-model="form.trackStatus">
             <el-radio
-              v-for="dict in dict.type.order_status"
+              v-for="dict in dict.type.express_track_status"
               :key="dict.value"
               :label="dict.value"
             >{{dict.label}}</el-radio>
@@ -164,7 +164,7 @@ import { listTrack, getTrack, delTrack, addTrack, updateTrack } from "@/api/expr
 
 export default {
   name: "Track",
-  dicts: ['order_status'],
+  dicts: ['express_track_status'],
   data() {
     return {
       // 遮罩层
@@ -197,7 +197,7 @@ export default {
       // 表单校验
       rules: {
         waybillNo: [
-          { required: true, message: "关联快递单号不能为空", trigger: "blur" }
+          { required: true, message: "快递单号不能为空", trigger: "blur" }
         ],
         trackStatus: [
           { required: true, message: "轨迹状态不能为空", trigger: "change" }

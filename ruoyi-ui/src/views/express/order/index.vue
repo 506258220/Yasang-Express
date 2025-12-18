@@ -1,26 +1,28 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="订单编号" prop="orderNo">
+      <el-form-item label="订单号" prop="orderNo">
         <el-input
           v-model="queryParams.orderNo"
-          placeholder="请输入订单编号"
+          placeholder="请输入订单号"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
       <el-form-item label="支付渠道" prop="payChannel">
-        <el-input
-          v-model="queryParams.payChannel"
-          placeholder="请输入支付渠道"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="订单状态" prop="orderStatus">
-        <el-select v-model="queryParams.orderStatus" placeholder="请选择订单状态" clearable>
+        <el-select v-model="queryParams.payChannel" placeholder="请选择支付渠道" clearable>
           <el-option
-            v-for="dict in dict.type.order_status"
+              v-for="dict in dict.type.express_order_pay_channel"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="支付状态" prop="orderStatus">
+        <el-select v-model="queryParams.orderStatus" placeholder="请选择支付状态" clearable>
+          <el-option
+            v-for="dict in dict.type.express_order_pay_status"
             :key="dict.value"
             :label="dict.label"
             :value="dict.value"
@@ -30,7 +32,7 @@
       <el-form-item label="退款状态" prop="refundStatus">
         <el-select v-model="queryParams.refundStatus" placeholder="请选择退款状态" clearable>
           <el-option
-            v-for="dict in dict.type.order_status"
+            v-for="dict in dict.type.express_order_refund_status"
             :key="dict.value"
             :label="dict.label"
             :value="dict.value"
@@ -86,38 +88,64 @@
           v-hasPermi="['express:order:export']"
         >导出</el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="success"
+          plain
+          icon="el-icon-upload2"
+          size="mini"
+          @click="handleImport"
+          v-hasPermi="['express:order:import']"
+        >导入</el-button>
+      </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="orderList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="订单ID" align="center" prop="orderId" />
-      <el-table-column label="订单编号" align="center" prop="orderNo" />
-      <el-table-column label="支付方式" align="center" prop="payType" />
-      <el-table-column label="支付渠道" align="center" prop="payChannel" />
-      <el-table-column label="订单状态" align="center" prop="orderStatus">
+<!--      <el-table-column label="订单ID" align="center" prop="orderId" />-->
+      <el-table-column label="订单号" align="center" prop="orderNo" />
+      <el-table-column label="支付方式" align="center" prop="payType" >
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.order_status" :value="scope.row.orderStatus"/>
+          <dict-tag :options="dict.type.express_order_pay_type" :value="scope.row.payType"/>
+        </template>
+      </el-table-column>
+      <el-table-column label="支付渠道" align="center" prop="payChannel" >
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.express_order_pay_channel" :value="scope.row.payChannel"/>
+        </template>
+      </el-table-column>
+      <el-table-column label="支付状态" align="center" prop="orderStatus">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.express_order_pay_status" :value="scope.row.orderStatus"/>
         </template>
       </el-table-column>
       <el-table-column label="退款状态" align="center" prop="refundStatus">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.order_status" :value="scope.row.refundStatus"/>
+          <dict-tag :options="dict.type.express_order_refund_status" :value="scope.row.refundStatus"/>
         </template>
       </el-table-column>
-      <el-table-column label="商品信息" align="center" prop="goodsInfo" />
-      <el-table-column label="收货人姓名" align="center" prop="consignee" />
+      <el-table-column label="商品信息" align="left" prop="goodsInfo" width="200">
+        <template slot-scope="scope">
+          <div style="word-break: break-all; white-space: normal;">{{ scope.row.goodsInfo }}</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="收货人姓名" align="center" prop="consignee" width="100"/>
       <el-table-column label="收货电话" align="center" prop="consigneePhone" />
-      <el-table-column label="收货地址" align="center" prop="consigneeAddress" />
+      <el-table-column label="收货地址" align="left" prop="consigneeAddress" width="300">
+        <template slot-scope="scope">
+          <div style="word-break: break-all; white-space: normal;">{{ scope.row.consigneeAddress }}</div>
+        </template>
+      </el-table-column>
       <el-table-column label="用户备注" align="center" prop="userRemark" />
-      <el-table-column label="商户备注" align="center" prop="merchantRemark" />
-      <el-table-column label="订单金额" align="center" prop="orderAmount" />
-      <el-table-column label="支付时间" align="center" prop="payTime" width="180">
+<!--      <el-table-column label="商户备注" align="center" prop="merchantRemark" />-->
+      <el-table-column label="实际支付金额" align="center" prop="orderAmount" width="100"/>
+      <el-table-column label="支付时间" align="center" prop="payTime" width="80">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.payTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="退款时间" align="center" prop="refundTime" width="180">
+      <el-table-column label="退款时间" align="center" prop="refundTime" width="80">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.refundTime, '{y}-{m}-{d}') }}</span>
         </template>
@@ -141,7 +169,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -151,18 +179,18 @@
     />
 
     <!-- 添加或修改订单管理对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="订单编号" prop="orderNo">
-          <el-input v-model="form.orderNo" placeholder="请输入订单编号" />
+        <el-form-item label="订单号" prop="orderNo">
+          <el-input v-model="form.orderNo" placeholder="请输入订单号" />
         </el-form-item>
         <el-form-item label="支付渠道" prop="payChannel">
           <el-input v-model="form.payChannel" placeholder="请输入支付渠道" />
         </el-form-item>
-        <el-form-item label="订单状态" prop="orderStatus">
+        <el-form-item label="支付状态" prop="orderStatus">
           <el-radio-group v-model="form.orderStatus">
             <el-radio
-              v-for="dict in dict.type.order_status"
+              v-for="dict in dict.type.express_order_pay_status"
               :key="dict.value"
               :label="dict.value"
             >{{dict.label}}</el-radio>
@@ -171,7 +199,7 @@
         <el-form-item label="退款状态" prop="refundStatus">
           <el-radio-group v-model="form.refundStatus">
             <el-radio
-              v-for="dict in dict.type.order_status"
+              v-for="dict in dict.type.express_order_refund_status"
               :key="dict.value"
               :label="dict.value"
             >{{dict.label}}</el-radio>
@@ -192,11 +220,11 @@
         <el-form-item label="用户备注" prop="userRemark">
           <el-input v-model="form.userRemark" placeholder="请输入用户备注" />
         </el-form-item>
-        <el-form-item label="商户备注" prop="merchantRemark">
-          <el-input v-model="form.merchantRemark" placeholder="请输入商户备注" />
-        </el-form-item>
-        <el-form-item label="订单金额" prop="orderAmount">
-          <el-input v-model="form.orderAmount" placeholder="请输入订单金额" />
+<!--        <el-form-item label="商户备注" prop="merchantRemark">-->
+<!--          <el-input v-model="form.merchantRemark" placeholder="请输入商户备注" />-->
+<!--        </el-form-item>-->
+        <el-form-item label="实际支付金额" prop="orderAmount">
+          <el-input v-model="form.orderAmount" placeholder="请输入实际支付金额" />
         </el-form-item>
         <el-form-item label="支付时间" prop="payTime">
           <el-date-picker clearable
@@ -214,24 +242,49 @@
             placeholder="请选择退款时间">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="删除标志" prop="delFlag">
-          <el-input v-model="form.delFlag" placeholder="请输入删除标志" />
-        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+    <!-- 导入订单管理对话框 -->
+    <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px" append-to-body>
+      <el-upload
+        ref="upload"
+        :limit="1"
+        accept=".xlsx, .xls"
+        :headers="upload.headers"
+        :action="upload.url"
+        :disabled="upload.isUploading"
+        :on-progress="handleFileUploadProgress"
+        :on-success="handleFileSuccess"
+        :auto-upload="false"
+        drag
+      >
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+        <div class="el-upload__tip text-center" slot="tip">
+          <span>仅允许上传xlsx、xls格式文件</span>
+          <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="downloadTemplate">下载模板</el-link>
+        </div>
+      </el-upload>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitUpload">确 定</el-button>
+        <el-button @click="upload.open = false">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { listOrder, getOrder, delOrder, addOrder, updateOrder } from "@/api/express/order"
+import { listOrder, getOrder, delOrder, addOrder, updateOrder, importOrder, importTemplate } from "@/api/express/order"
+import { getToken } from "@/utils/auth"
 
 export default {
   name: "Order",
-  dicts: ['order_status'],
+  dicts: ['express_order_pay_status','express_order_refund_status','express_order_pay_type','express_order_pay_channel'],
   data() {
     return {
       // 遮罩层
@@ -267,7 +320,7 @@ export default {
       // 表单校验
       rules: {
         orderNo: [
-          { required: true, message: "订单编号不能为空", trigger: "blur" }
+          { required: true, message: "订单号不能为空", trigger: "blur" }
         ],
         goodsInfo: [
           { required: true, message: "商品信息不能为空", trigger: "blur" }
@@ -281,6 +334,21 @@ export default {
         consigneeAddress: [
           { required: true, message: "收货地址不能为空", trigger: "blur" }
         ],
+      },
+      // 导入参数
+      upload: {
+        // 是否显示弹出层（导入）
+        open: false,
+        // 弹出层标题（导入）
+        title: "导入订单管理",
+        // 是否禁用上传
+        isUploading: false,
+        // 是否更新已经存在的数据
+        updateSupport: 0,
+        // 设置上传的请求头部
+        headers: { Authorization: "Bearer " + getToken() },
+        // 上传的地址
+        url: process.env.VUE_APP_BASE_API + "/express/order/importData"
       }
     }
   },
@@ -395,6 +463,34 @@ export default {
       this.download('express/order/export', {
         ...this.queryParams
       }, `order_${new Date().getTime()}.xlsx`)
+    },
+    /** 导入按钮操作 */
+    handleImport() {
+      this.upload.open = true
+    },
+    /** 下载模板操作 */
+    downloadTemplate() {
+      const url = process.env.VUE_APP_BASE_API + "/express/order/importTemplate"
+      this.download(url, {}, "订单导入模板.xlsx")
+    },
+    /** 提交上传 */
+    submitUpload() {
+      this.$refs.upload.submit()
+    },
+    /** 文件上传中处理 */
+    handleFileUploadProgress(event, file, fileList) {
+      this.upload.isUploading = true
+    },
+    /** 文件上传成功处理 */
+    handleFileSuccess(response, file, fileList) {
+      this.upload.open = false
+      this.upload.isUploading = false
+      if (response.code === 200) {
+        this.$modal.msgSuccess("导入成功")
+        this.getList()
+      } else {
+        this.$modal.msgError(response.msg)
+      }
     }
   }
 }

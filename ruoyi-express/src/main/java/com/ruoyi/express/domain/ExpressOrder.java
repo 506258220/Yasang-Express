@@ -9,235 +9,318 @@ import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
- * 订单管理对象 express_order
- *
+ * 快递订单对象 express_order
+ * 
  * @author apisflorea
- * @date 2025-12-17
+ * @date 2025-12-29
  */
 public class ExpressOrder extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
-    /** 订单ID */
-    private Long orderId;
+    /** 主键ID */
+    private Long id;
 
-    /** 订单号（唯一） */
-    @Excel(name = "订单号")
+    /** 快递单号（唯一） */
+    @Excel(name = "快递单号", readConverterExp = "唯=一")
     private String orderNo;
 
-    /** 支付方式（0=微信支付,1=余额支付） */
-    @Excel(name = "支付方式",readConverterExp = "0=微信支付,1=余额支付")
-    private String payType;
+    /** 寄件人客户ID，关联express_customer */
+    @Excel(name = "寄件人客户ID，关联express_customer")
+    private Long customerId;
 
-    /** 支付渠道（0=小程序,1=余额） */
-    @Excel(name = "支付渠道",readConverterExp = "0=小程序,1=余额")
-    private String payChannel;
+    /** 寄件人姓名 */
+    @Excel(name = "寄件人姓名")
+    private String senderName;
 
-    /** 支付状态（0待支付 1已支付 2已取消 3已完成） */
-    @Excel(name = "支付状态", readConverterExp = "0=待支付,1=已支付,2=已取消,3=已完成")
-    private String orderStatus;
+    /** 寄件人真实手机号 */
+    @Excel(name = "寄件人真实手机号")
+    private String senderPhone;
 
-    /** 退款状态（0未退款 1退款中 2已退款） */
-    @Excel(name = "退款状态", readConverterExp = "0=未退款,1=退款中,2=已退款")
-    private String refundStatus;
+    /** 寄件人虚拟号，关联express_virtual_number */
+    @Excel(name = "寄件人虚拟号，关联express_virtual_number")
+    private String senderVirtualPhone;
 
-    /** 商品信息（JSON格式：[{"name":"商品1","num":1,"price":10.00}]） */
-    @Excel(name = "商品信息")
-    private String goodsInfo;
+    /** 寄件人详细地址 */
+    @Excel(name = "寄件人详细地址")
+    private String senderAddress;
 
-    /** 收货人 */
-    @Excel(name = "收货人")
-    private String consignee;
+    /** 收件人姓名 */
+    @Excel(name = "收件人姓名")
+    private String receiverName;
 
-    /** 收货电话 */
-    @Excel(name = "收货电话")
-    private String consigneePhone;
+    /** 收件人真实手机号 */
+    @Excel(name = "收件人真实手机号")
+    private String receiverPhone;
 
-    /** 收货地址（省+市+区+详细地址） */
-    @Excel(name = "收货地址")
-    private String consigneeAddress;
+    /** 收件人虚拟号，关联express_virtual_number */
+    @Excel(name = "收件人虚拟号，关联express_virtual_number")
+    private String receiverVirtualPhone;
 
-    /** 用户备注 */
-    @Excel(name = "用户备注")
-    private String userRemark;
+    /** 收件人详细地址 */
+    @Excel(name = "收件人详细地址")
+    private String receiverAddress;
 
-    /** 商户备注 */
-    @Excel(name = "商户备注")
-    private String merchantRemark;
+    /** 快递类型（普通件/生鲜件/大件） */
+    @Excel(name = "快递类型", readConverterExp = "普=通件/生鲜件/大件")
+    private String expressType;
 
-    /** 实际支付金额 */
-    @Excel(name = "实际支付金额")
-    private BigDecimal orderAmount;
+    /** 快递重量（kg） */
+    @Excel(name = "快递重量", readConverterExp = "k=g")
+    private BigDecimal weight;
+
+    /** 运费金额 */
+    @Excel(name = "运费金额")
+    private BigDecimal freight;
+
+    /** 支付状态（0-未支付 1-已支付 2-已退款） */
+    @Excel(name = "支付状态", readConverterExp = "0=-未支付,1=-已支付,2=-已退款")
+    private String payStatus;
 
     /** 支付时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "支付时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date payTime;
 
-    /** 退款时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "退款时间", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date refundTime;
+    /** 订单状态（01-待揽收 02-运输中 03-派送中 04-已签收 05-已退回 06-异常） */
+    @Excel(name = "订单状态", readConverterExp = "0=1-待揽收,0=2-运输中,0=3-派送中,0=4-已签收,0=5-已退回,0=6-异常")
+    private String orderStatus;
 
-    /** 删除标志（0存在 2删除） */
+    /** 始发仓库ID，关联express_warehouse */
+    @Excel(name = "始发仓库ID，关联express_warehouse")
+    private Long warehouseId;
+
+    /** 运输车辆ID，关联express_vehicle */
+    @Excel(name = "运输车辆ID，关联express_vehicle")
+    private Long vehicleId;
+
+    /** 派送司机ID，关联sys_user（司机角色） */
+    @Excel(name = "派送司机ID，关联sys_user", readConverterExp = "司=机角色")
+    private Long driverId;
+
+    /** 面单模板ID，关联express_waybill_template */
+    @Excel(name = "面单模板ID，关联express_waybill_template")
+    private Long waybillTemplateId;
+
+    /** 逻辑删除（0-正常 1-删除） */
     private String delFlag;
 
-    public void setOrderId(Long orderId)
+    public void setId(Long id) 
     {
-        this.orderId = orderId;
+        this.id = id;
     }
 
-    public Long getOrderId()
+    public Long getId() 
     {
-        return orderId;
+        return id;
     }
 
-    public void setOrderNo(String orderNo)
+    public void setOrderNo(String orderNo) 
     {
         this.orderNo = orderNo;
     }
 
-    public String getOrderNo()
+    public String getOrderNo() 
     {
         return orderNo;
     }
 
-    public void setPayType(String payType)
+    public void setCustomerId(Long customerId) 
     {
-        this.payType = payType;
+        this.customerId = customerId;
     }
 
-    public String getPayType()
+    public Long getCustomerId() 
     {
-        return payType;
+        return customerId;
     }
 
-    public void setPayChannel(String payChannel)
+    public void setSenderName(String senderName) 
     {
-        this.payChannel = payChannel;
+        this.senderName = senderName;
     }
 
-    public String getPayChannel()
+    public String getSenderName() 
     {
-        return payChannel;
+        return senderName;
     }
 
-    public void setOrderStatus(String orderStatus)
+    public void setSenderPhone(String senderPhone) 
     {
-        this.orderStatus = orderStatus;
+        this.senderPhone = senderPhone;
     }
 
-    public String getOrderStatus()
+    public String getSenderPhone() 
     {
-        return orderStatus;
+        return senderPhone;
     }
 
-    public void setRefundStatus(String refundStatus)
+    public void setSenderVirtualPhone(String senderVirtualPhone) 
     {
-        this.refundStatus = refundStatus;
+        this.senderVirtualPhone = senderVirtualPhone;
     }
 
-    public String getRefundStatus()
+    public String getSenderVirtualPhone() 
     {
-        return refundStatus;
+        return senderVirtualPhone;
     }
 
-    public void setGoodsInfo(String goodsInfo)
+    public void setSenderAddress(String senderAddress) 
     {
-        this.goodsInfo = goodsInfo;
+        this.senderAddress = senderAddress;
     }
 
-    public String getGoodsInfo()
+    public String getSenderAddress() 
     {
-        return goodsInfo;
+        return senderAddress;
     }
 
-    public void setConsignee(String consignee)
+    public void setReceiverName(String receiverName) 
     {
-        this.consignee = consignee;
+        this.receiverName = receiverName;
     }
 
-    public String getConsignee()
+    public String getReceiverName() 
     {
-        return consignee;
+        return receiverName;
     }
 
-    public void setConsigneePhone(String consigneePhone)
+    public void setReceiverPhone(String receiverPhone) 
     {
-        this.consigneePhone = consigneePhone;
+        this.receiverPhone = receiverPhone;
     }
 
-    public String getConsigneePhone()
+    public String getReceiverPhone() 
     {
-        return consigneePhone;
+        return receiverPhone;
     }
 
-    public void setConsigneeAddress(String consigneeAddress)
+    public void setReceiverVirtualPhone(String receiverVirtualPhone) 
     {
-        this.consigneeAddress = consigneeAddress;
+        this.receiverVirtualPhone = receiverVirtualPhone;
     }
 
-    public String getConsigneeAddress()
+    public String getReceiverVirtualPhone() 
     {
-        return consigneeAddress;
+        return receiverVirtualPhone;
     }
 
-    public void setUserRemark(String userRemark)
+    public void setReceiverAddress(String receiverAddress) 
     {
-        this.userRemark = userRemark;
+        this.receiverAddress = receiverAddress;
     }
 
-    public String getUserRemark()
+    public String getReceiverAddress() 
     {
-        return userRemark;
+        return receiverAddress;
     }
 
-    public void setMerchantRemark(String merchantRemark)
+    public void setExpressType(String expressType) 
     {
-        this.merchantRemark = merchantRemark;
+        this.expressType = expressType;
     }
 
-    public String getMerchantRemark()
+    public String getExpressType() 
     {
-        return merchantRemark;
+        return expressType;
     }
 
-    public void setOrderAmount(BigDecimal orderAmount)
+    public void setWeight(BigDecimal weight) 
     {
-        this.orderAmount = orderAmount;
+        this.weight = weight;
     }
 
-    public BigDecimal getOrderAmount()
+    public BigDecimal getWeight() 
     {
-        return orderAmount;
+        return weight;
     }
 
-    public void setPayTime(Date payTime)
+    public void setFreight(BigDecimal freight) 
+    {
+        this.freight = freight;
+    }
+
+    public BigDecimal getFreight() 
+    {
+        return freight;
+    }
+
+    public void setPayStatus(String payStatus) 
+    {
+        this.payStatus = payStatus;
+    }
+
+    public String getPayStatus() 
+    {
+        return payStatus;
+    }
+
+    public void setPayTime(Date payTime) 
     {
         this.payTime = payTime;
     }
 
-    public Date getPayTime()
+    public Date getPayTime() 
     {
         return payTime;
     }
 
-    public void setRefundTime(Date refundTime)
+    public void setOrderStatus(String orderStatus) 
     {
-        this.refundTime = refundTime;
+        this.orderStatus = orderStatus;
     }
 
-    public Date getRefundTime()
+    public String getOrderStatus() 
     {
-        return refundTime;
+        return orderStatus;
     }
 
-    public void setDelFlag(String delFlag)
+    public void setWarehouseId(Long warehouseId) 
+    {
+        this.warehouseId = warehouseId;
+    }
+
+    public Long getWarehouseId() 
+    {
+        return warehouseId;
+    }
+
+    public void setVehicleId(Long vehicleId) 
+    {
+        this.vehicleId = vehicleId;
+    }
+
+    public Long getVehicleId() 
+    {
+        return vehicleId;
+    }
+
+    public void setDriverId(Long driverId) 
+    {
+        this.driverId = driverId;
+    }
+
+    public Long getDriverId() 
+    {
+        return driverId;
+    }
+
+    public void setWaybillTemplateId(Long waybillTemplateId) 
+    {
+        this.waybillTemplateId = waybillTemplateId;
+    }
+
+    public Long getWaybillTemplateId() 
+    {
+        return waybillTemplateId;
+    }
+
+    public void setDelFlag(String delFlag) 
     {
         this.delFlag = delFlag;
     }
 
-    public String getDelFlag()
+    public String getDelFlag() 
     {
         return delFlag;
     }
@@ -245,21 +328,28 @@ public class ExpressOrder extends BaseEntity
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("orderId", getOrderId())
+            .append("id", getId())
             .append("orderNo", getOrderNo())
-            .append("payType", getPayType())
-            .append("payChannel", getPayChannel())
-            .append("orderStatus", getOrderStatus())
-            .append("refundStatus", getRefundStatus())
-            .append("goodsInfo", getGoodsInfo())
-            .append("consignee", getConsignee())
-            .append("consigneePhone", getConsigneePhone())
-            .append("consigneeAddress", getConsigneeAddress())
-            .append("userRemark", getUserRemark())
-            .append("merchantRemark", getMerchantRemark())
-            .append("orderAmount", getOrderAmount())
+            .append("customerId", getCustomerId())
+            .append("senderName", getSenderName())
+            .append("senderPhone", getSenderPhone())
+            .append("senderVirtualPhone", getSenderVirtualPhone())
+            .append("senderAddress", getSenderAddress())
+            .append("receiverName", getReceiverName())
+            .append("receiverPhone", getReceiverPhone())
+            .append("receiverVirtualPhone", getReceiverVirtualPhone())
+            .append("receiverAddress", getReceiverAddress())
+            .append("expressType", getExpressType())
+            .append("weight", getWeight())
+            .append("freight", getFreight())
+            .append("payStatus", getPayStatus())
             .append("payTime", getPayTime())
-            .append("refundTime", getRefundTime())
+            .append("orderStatus", getOrderStatus())
+            .append("warehouseId", getWarehouseId())
+            .append("vehicleId", getVehicleId())
+            .append("driverId", getDriverId())
+            .append("waybillTemplateId", getWaybillTemplateId())
+            .append("remark", getRemark())
             .append("createBy", getCreateBy())
             .append("createTime", getCreateTime())
             .append("updateBy", getUpdateBy())

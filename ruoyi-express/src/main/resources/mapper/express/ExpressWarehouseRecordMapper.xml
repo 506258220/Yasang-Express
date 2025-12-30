@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.express.mapper.ExpressWarehouseRecordMapper">
+    
+    <resultMap type="ExpressWarehouseRecord" id="ExpressWarehouseRecordResult">
+        <result property="id"    column="id"    />
+        <result property="orderNo"    column="order_no"    />
+        <result property="warehouseId"    column="warehouse_id"    />
+        <result property="recordType"    column="record_type"    />
+        <result property="operateUserId"    column="operate_user_id"    />
+        <result property="operateTime"    column="operate_time"    />
+        <result property="stockBefore"    column="stock_before"    />
+        <result property="stockAfter"    column="stock_after"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectExpressWarehouseRecordVo">
+        select id, order_no, warehouse_id, record_type, operate_user_id, operate_time, stock_before, stock_after, remark, create_by, create_time, update_by, update_time, del_flag from express_warehouse_record
+    </sql>
+
+    <select id="selectExpressWarehouseRecordList" parameterType="ExpressWarehouseRecord" resultMap="ExpressWarehouseRecordResult">
+        <include refid="selectExpressWarehouseRecordVo"/>
+        <where>  
+            <if test="orderNo != null  and orderNo != ''"> and order_no = #{orderNo}</if>
+            <if test="warehouseId != null "> and warehouse_id = #{warehouseId}</if>
+            <if test="recordType != null  and recordType != ''"> and record_type = #{recordType}</if>
+            <if test="operateUserId != null "> and operate_user_id = #{operateUserId}</if>
+            <if test="operateTime != null "> and operate_time = #{operateTime}</if>
+            <if test="stockBefore != null "> and stock_before = #{stockBefore}</if>
+            <if test="stockAfter != null "> and stock_after = #{stockAfter}</if>
+        </where>
+    </select>
+    
+    <select id="selectExpressWarehouseRecordById" parameterType="Long" resultMap="ExpressWarehouseRecordResult">
+        <include refid="selectExpressWarehouseRecordVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertExpressWarehouseRecord" parameterType="ExpressWarehouseRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into express_warehouse_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderNo != null and orderNo != ''">order_no,</if>
+            <if test="warehouseId != null">warehouse_id,</if>
+            <if test="recordType != null and recordType != ''">record_type,</if>
+            <if test="operateUserId != null">operate_user_id,</if>
+            <if test="operateTime != null">operate_time,</if>
+            <if test="stockBefore != null">stock_before,</if>
+            <if test="stockAfter != null">stock_after,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderNo != null and orderNo != ''">#{orderNo},</if>
+            <if test="warehouseId != null">#{warehouseId},</if>
+            <if test="recordType != null and recordType != ''">#{recordType},</if>
+            <if test="operateUserId != null">#{operateUserId},</if>
+            <if test="operateTime != null">#{operateTime},</if>
+            <if test="stockBefore != null">#{stockBefore},</if>
+            <if test="stockAfter != null">#{stockAfter},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateExpressWarehouseRecord" parameterType="ExpressWarehouseRecord">
+        update express_warehouse_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderNo != null and orderNo != ''">order_no = #{orderNo},</if>
+            <if test="warehouseId != null">warehouse_id = #{warehouseId},</if>
+            <if test="recordType != null and recordType != ''">record_type = #{recordType},</if>
+            <if test="operateUserId != null">operate_user_id = #{operateUserId},</if>
+            <if test="operateTime != null">operate_time = #{operateTime},</if>
+            <if test="stockBefore != null">stock_before = #{stockBefore},</if>
+            <if test="stockAfter != null">stock_after = #{stockAfter},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteExpressWarehouseRecordById" parameterType="Long">
+        delete from express_warehouse_record where id = #{id}
+    </delete>
+
+    <delete id="deleteExpressWarehouseRecordByIds" parameterType="String">
+        delete from express_warehouse_record where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

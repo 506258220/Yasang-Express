@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.express.mapper.ExpressThirdOrderMapper">
+
+    <resultMap type="ExpressThirdOrder" id="ExpressThirdOrderResult">
+        <result property="orderId"    column="order_id"    />
+        <result property="orderType"    column="order_type"    />
+        <result property="orderNo"    column="order_no"    />
+        <result property="merchantName"    column="merchant_name"    />
+        <result property="userNickname"    column="user_nickname"    />
+        <result property="actualPayAmount"    column="actual_pay_amount"    />
+        <result property="payStatus"    column="pay_status"    />
+        <result property="payType"    column="pay_type"    />
+        <result property="payChannel"    column="pay_channel"    />
+        <result property="orderStatus"    column="order_status"    />
+        <result property="refundStatus"    column="refund_status"    />
+        <result property="orderCreateTime"    column="order_create_time"    />
+        <result property="productInfo"    column="product_info"    />
+        <result property="receiverName"    column="receiver_name"    />
+        <result property="receiverPhone"    column="receiver_phone"    />
+        <result property="receiverAddress"    column="receiver_address"    />
+        <result property="userRemark"    column="user_remark"    />
+        <result property="merchantRemark"    column="merchant_remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectExpressThirdOrderVo">
+        select order_id, order_type, order_no, merchant_name, user_nickname, actual_pay_amount, pay_status, pay_type, pay_channel, order_status, refund_status, order_create_time, product_info, receiver_name, receiver_phone, receiver_address, user_remark, merchant_remark, create_by, create_time, update_by, update_time, del_flag from express_third_order
+    </sql>
+
+    <select id="selectExpressThirdOrderList" parameterType="ExpressThirdOrder" resultMap="ExpressThirdOrderResult">
+        <include refid="selectExpressThirdOrderVo"/>
+        <where>
+            <if test="orderType != null "> and order_type = #{orderType}</if>
+            <if test="orderNo != null  and orderNo != ''"> and order_no = #{orderNo}</if>
+            <if test="merchantName != null  and merchantName != ''"> and merchant_name like concat('%', #{merchantName}, '%')</if>
+            <if test="userNickname != null  and userNickname != ''"> and user_nickname like concat('%', #{userNickname}, '%')</if>
+            <if test="actualPayAmount != null "> and actual_pay_amount = #{actualPayAmount}</if>
+            <if test="payStatus != null "> and pay_status = #{payStatus}</if>
+            <if test="payType != null "> and pay_type = #{payType}</if>
+            <if test="payChannel != null  and payChannel != ''"> and pay_channel = #{payChannel}</if>
+            <if test="orderStatus != null "> and order_status = #{orderStatus}</if>
+            <if test="refundStatus != null "> and refund_status = #{refundStatus}</if>
+            <if test="orderCreateTime != null "> and order_create_time = #{orderCreateTime}</if>
+            <if test="productInfo != null  and productInfo != ''"> and product_info = #{productInfo}</if>
+            <if test="receiverName != null  and receiverName != ''"> and receiver_name like concat('%', #{receiverName}, '%')</if>
+            <if test="receiverPhone != null  and receiverPhone != ''"> and receiver_phone = #{receiverPhone}</if>
+            <if test="receiverAddress != null  and receiverAddress != ''"> and receiver_address = #{receiverAddress}</if>
+            <if test="userRemark != null  and userRemark != ''"> and user_remark = #{userRemark}</if>
+            <if test="merchantRemark != null  and merchantRemark != ''"> and merchant_remark = #{merchantRemark}</if>
+        </where>
+    </select>
+
+    <select id="selectExpressThirdOrderByOrderId" parameterType="Long" resultMap="ExpressThirdOrderResult">
+        <include refid="selectExpressThirdOrderVo"/>
+        where order_id = #{orderId}
+    </select>
+
+    <insert id="insertExpressThirdOrder" parameterType="ExpressThirdOrder" useGeneratedKeys="true" keyProperty="orderId">
+        insert into express_third_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderType != null">order_type,</if>
+            <if test="orderNo != null and orderNo != ''">order_no,</if>
+            <if test="merchantName != null and merchantName != ''">merchant_name,</if>
+            <if test="userNickname != null">user_nickname,</if>
+            <if test="actualPayAmount != null">actual_pay_amount,</if>
+            <if test="payStatus != null">pay_status,</if>
+            <if test="payType != null">pay_type,</if>
+            <if test="payChannel != null">pay_channel,</if>
+            <if test="orderStatus != null">order_status,</if>
+            <if test="refundStatus != null">refund_status,</if>
+            <if test="orderCreateTime != null">order_create_time,</if>
+            <if test="productInfo != null">product_info,</if>
+            <if test="receiverName != null">receiver_name,</if>
+            <if test="receiverPhone != null">receiver_phone,</if>
+            <if test="receiverAddress != null">receiver_address,</if>
+            <if test="userRemark != null">user_remark,</if>
+            <if test="merchantRemark != null">merchant_remark,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null and updateBy != ''">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderType != null">#{orderType},</if>
+            <if test="orderNo != null and orderNo != ''">#{orderNo},</if>
+            <if test="merchantName != null and merchantName != ''">#{merchantName},</if>
+            <if test="userNickname != null">#{userNickname},</if>
+            <if test="actualPayAmount != null">#{actualPayAmount},</if>
+            <if test="payStatus != null">#{payStatus},</if>
+            <if test="payType != null">#{payType},</if>
+            <if test="payChannel != null">#{payChannel},</if>
+            <if test="orderStatus != null">#{orderStatus},</if>
+            <if test="refundStatus != null">#{refundStatus},</if>
+            <if test="orderCreateTime != null">#{orderCreateTime},</if>
+            <if test="productInfo != null">#{productInfo},</if>
+            <if test="receiverName != null">#{receiverName},</if>
+            <if test="receiverPhone != null">#{receiverPhone},</if>
+            <if test="receiverAddress != null">#{receiverAddress},</if>
+            <if test="userRemark != null">#{userRemark},</if>
+            <if test="merchantRemark != null">#{merchantRemark},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+        </trim>
+    </insert>
+
+    <update id="updateExpressThirdOrder" parameterType="ExpressThirdOrder">
+        update express_third_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderType != null">order_type = #{orderType},</if>
+            <if test="orderNo != null and orderNo != ''">order_no = #{orderNo},</if>
+            <if test="merchantName != null and merchantName != ''">merchant_name = #{merchantName},</if>
+            <if test="userNickname != null">user_nickname = #{userNickname},</if>
+            <if test="actualPayAmount != null">actual_pay_amount = #{actualPayAmount},</if>
+            <if test="payStatus != null">pay_status = #{payStatus},</if>
+            <if test="payType != null">pay_type = #{payType},</if>
+            <if test="payChannel != null">pay_channel = #{payChannel},</if>
+            <if test="orderStatus != null">order_status = #{orderStatus},</if>
+            <if test="refundStatus != null">refund_status = #{refundStatus},</if>
+            <if test="orderCreateTime != null">order_create_time = #{orderCreateTime},</if>
+            <if test="productInfo != null">product_info = #{productInfo},</if>
+            <if test="receiverName != null">receiver_name = #{receiverName},</if>
+            <if test="receiverPhone != null">receiver_phone = #{receiverPhone},</if>
+            <if test="receiverAddress != null">receiver_address = #{receiverAddress},</if>
+            <if test="userRemark != null">user_remark = #{userRemark},</if>
+            <if test="merchantRemark != null">merchant_remark = #{merchantRemark},</if>
+            <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where order_id = #{orderId}
+    </update>
+
+    <delete id="deleteExpressThirdOrderByOrderId" parameterType="Long">
+        delete from express_third_order where order_id = #{orderId}
+    </delete>
+
+    <delete id="deleteExpressThirdOrderByOrderIds" parameterType="String">
+        delete from express_third_order where order_id in
+        <foreach item="orderId" collection="array" open="(" separator="," close=")">
+            #{orderId}
+        </foreach>
+    </delete>
+</mapper>

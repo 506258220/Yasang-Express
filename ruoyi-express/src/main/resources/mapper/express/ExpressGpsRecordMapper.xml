@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.express.mapper.ExpressGpsRecordMapper">
+    
+    <resultMap type="ExpressGpsRecord" id="ExpressGpsRecordResult">
+        <result property="id"    column="id"    />
+        <result property="vehicleId"    column="vehicle_id"    />
+        <result property="driverId"    column="driver_id"    />
+        <result property="orderNo"    column="order_no"    />
+        <result property="longitude"    column="longitude"    />
+        <result property="latitude"    column="latitude"    />
+        <result property="locationTime"    column="location_time"    />
+        <result property="speed"    column="speed"    />
+        <result property="address"    column="address"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectExpressGpsRecordVo">
+        select id, vehicle_id, driver_id, order_no, longitude, latitude, location_time, speed, address, create_by, create_time, update_by, update_time, del_flag from express_gps_record
+    </sql>
+
+    <select id="selectExpressGpsRecordList" parameterType="ExpressGpsRecord" resultMap="ExpressGpsRecordResult">
+        <include refid="selectExpressGpsRecordVo"/>
+        <where>  
+            <if test="vehicleId != null "> and vehicle_id = #{vehicleId}</if>
+            <if test="driverId != null "> and driver_id = #{driverId}</if>
+            <if test="orderNo != null  and orderNo != ''"> and order_no = #{orderNo}</if>
+            <if test="longitude != null "> and longitude = #{longitude}</if>
+            <if test="latitude != null "> and latitude = #{latitude}</if>
+            <if test="locationTime != null "> and location_time = #{locationTime}</if>
+            <if test="speed != null "> and speed = #{speed}</if>
+            <if test="address != null  and address != ''"> and address = #{address}</if>
+        </where>
+    </select>
+    
+    <select id="selectExpressGpsRecordById" parameterType="Long" resultMap="ExpressGpsRecordResult">
+        <include refid="selectExpressGpsRecordVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertExpressGpsRecord" parameterType="ExpressGpsRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into express_gps_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="vehicleId != null">vehicle_id,</if>
+            <if test="driverId != null">driver_id,</if>
+            <if test="orderNo != null">order_no,</if>
+            <if test="longitude != null">longitude,</if>
+            <if test="latitude != null">latitude,</if>
+            <if test="locationTime != null">location_time,</if>
+            <if test="speed != null">speed,</if>
+            <if test="address != null">address,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="vehicleId != null">#{vehicleId},</if>
+            <if test="driverId != null">#{driverId},</if>
+            <if test="orderNo != null">#{orderNo},</if>
+            <if test="longitude != null">#{longitude},</if>
+            <if test="latitude != null">#{latitude},</if>
+            <if test="locationTime != null">#{locationTime},</if>
+            <if test="speed != null">#{speed},</if>
+            <if test="address != null">#{address},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateExpressGpsRecord" parameterType="ExpressGpsRecord">
+        update express_gps_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="vehicleId != null">vehicle_id = #{vehicleId},</if>
+            <if test="driverId != null">driver_id = #{driverId},</if>
+            <if test="orderNo != null">order_no = #{orderNo},</if>
+            <if test="longitude != null">longitude = #{longitude},</if>
+            <if test="latitude != null">latitude = #{latitude},</if>
+            <if test="locationTime != null">location_time = #{locationTime},</if>
+            <if test="speed != null">speed = #{speed},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteExpressGpsRecordById" parameterType="Long">
+        delete from express_gps_record where id = #{id}
+    </delete>
+
+    <delete id="deleteExpressGpsRecordByIds" parameterType="String">
+        delete from express_gps_record where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

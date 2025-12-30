@@ -4,74 +4,58 @@ import java.util.List;
 import com.ruoyi.express.domain.ExpressOrder;
 
 /**
- * 订单管理Service接口
+ * 快递订单Service接口
  * 
  * @author apisflorea
- * @date 2025-12-17
+ * @date 2025-12-29
  */
 public interface IExpressOrderService 
 {
     /**
-     * 查询订单管理
+     * 查询快递订单
      * 
-     * @param orderId 订单管理主键
-     * @return 订单管理
+     * @param id 快递订单主键
+     * @return 快递订单
      */
-    public ExpressOrder selectExpressOrderByOrderId(Long orderId);
+    public ExpressOrder selectExpressOrderById(Long id);
 
     /**
-     * 查询订单管理列表
+     * 查询快递订单列表
      * 
-     * @param expressOrder 订单管理
-     * @return 订单管理集合
+     * @param expressOrder 快递订单
+     * @return 快递订单集合
      */
     public List<ExpressOrder> selectExpressOrderList(ExpressOrder expressOrder);
 
     /**
-     * 新增订单管理
+     * 新增快递订单
      * 
-     * @param expressOrder 订单管理
+     * @param expressOrder 快递订单
      * @return 结果
      */
     public int insertExpressOrder(ExpressOrder expressOrder);
 
     /**
-     * 修改订单管理
+     * 修改快递订单
      * 
-     * @param expressOrder 订单管理
+     * @param expressOrder 快递订单
      * @return 结果
      */
     public int updateExpressOrder(ExpressOrder expressOrder);
 
     /**
-     * 批量删除订单管理
+     * 批量删除快递订单
      * 
-     * @param orderIds 需要删除的订单管理主键集合
+     * @param ids 需要删除的快递订单主键集合
      * @return 结果
      */
-    public int deleteExpressOrderByOrderIds(Long[] orderIds);
+    public int deleteExpressOrderByIds(Long[] ids);
 
     /**
-     * 删除订单管理信息
+     * 删除快递订单信息
      * 
-     * @param orderId 订单管理主键
+     * @param id 快递订单主键
      * @return 结果
      */
-    public int deleteExpressOrderByOrderId(Long orderId);
-    
-    /**
-     * 批量导入订单管理
-     * 
-     * @param expressOrderList 订单管理列表
-     * @return 结果
-     */
-    public int batchInsertExpressOrder(List<ExpressOrder> expressOrderList);
-    
-    /**
-     * 根据订单号查询订单管理
-     * 
-     * @param orderNo 订单号
-     * @return 订单管理
-     */
-    public ExpressOrder selectExpressOrderByOrderNo(String orderNo);
+    public int deleteExpressOrderById(Long id);
 }

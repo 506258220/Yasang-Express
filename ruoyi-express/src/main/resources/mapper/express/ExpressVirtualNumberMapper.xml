@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.express.mapper.ExpressVirtualNumberMapper">
+    
+    <resultMap type="ExpressVirtualNumber" id="ExpressVirtualNumberResult">
+        <result property="id"    column="id"    />
+        <result property="virtualPhone"    column="virtual_phone"    />
+        <result property="realPhone"    column="real_phone"    />
+        <result property="orderNo"    column="order_no"    />
+        <result property="provider"    column="provider"    />
+        <result property="bindTime"    column="bind_time"    />
+        <result property="expireTime"    column="expire_time"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectExpressVirtualNumberVo">
+        select id, virtual_phone, real_phone, order_no, provider, bind_time, expire_time, status, create_by, create_time, update_by, update_time, del_flag from express_virtual_number
+    </sql>
+
+    <select id="selectExpressVirtualNumberList" parameterType="ExpressVirtualNumber" resultMap="ExpressVirtualNumberResult">
+        <include refid="selectExpressVirtualNumberVo"/>
+        <where>  
+            <if test="virtualPhone != null  and virtualPhone != ''"> and virtual_phone = #{virtualPhone}</if>
+            <if test="realPhone != null  and realPhone != ''"> and real_phone = #{realPhone}</if>
+            <if test="orderNo != null  and orderNo != ''"> and order_no = #{orderNo}</if>
+            <if test="provider != null  and provider != ''"> and provider = #{provider}</if>
+            <if test="bindTime != null "> and bind_time = #{bindTime}</if>
+            <if test="expireTime != null "> and expire_time = #{expireTime}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectExpressVirtualNumberById" parameterType="Long" resultMap="ExpressVirtualNumberResult">
+        <include refid="selectExpressVirtualNumberVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertExpressVirtualNumber" parameterType="ExpressVirtualNumber" useGeneratedKeys="true" keyProperty="id">
+        insert into express_virtual_number
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="virtualPhone != null and virtualPhone != ''">virtual_phone,</if>
+            <if test="realPhone != null and realPhone != ''">real_phone,</if>
+            <if test="orderNo != null">order_no,</if>
+            <if test="provider != null and provider != ''">provider,</if>
+            <if test="bindTime != null">bind_time,</if>
+            <if test="expireTime != null">expire_time,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="virtualPhone != null and virtualPhone != ''">#{virtualPhone},</if>
+            <if test="realPhone != null and realPhone != ''">#{realPhone},</if>
+            <if test="orderNo != null">#{orderNo},</if>
+            <if test="provider != null and provider != ''">#{provider},</if>
+            <if test="bindTime != null">#{bindTime},</if>
+            <if test="expireTime != null">#{expireTime},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateExpressVirtualNumber" parameterType="ExpressVirtualNumber">
+        update express_virtual_number
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="virtualPhone != null and virtualPhone != ''">virtual_phone = #{virtualPhone},</if>
+            <if test="realPhone != null and realPhone != ''">real_phone = #{realPhone},</if>
+            <if test="orderNo != null">order_no = #{orderNo},</if>
+            <if test="provider != null and provider != ''">provider = #{provider},</if>
+            <if test="bindTime != null">bind_time = #{bindTime},</if>
+            <if test="expireTime != null">expire_time = #{expireTime},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteExpressVirtualNumberById" parameterType="Long">
+        delete from express_virtual_number where id = #{id}
+    </delete>
+
+    <delete id="deleteExpressVirtualNumberByIds" parameterType="String">
+        delete from express_virtual_number where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

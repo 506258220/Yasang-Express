@@ -3,23 +3,30 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.express.mapper.ExpressOrderMapper">
-
+    
     <resultMap type="ExpressOrder" id="ExpressOrderResult">
-        <result property="orderId"    column="order_id"    />
+        <result property="id"    column="id"    />
         <result property="orderNo"    column="order_no"    />
-        <result property="payType"    column="pay_type"    />
-        <result property="payChannel"    column="pay_channel"    />
-        <result property="orderStatus"    column="order_status"    />
-        <result property="refundStatus"    column="refund_status"    />
-        <result property="goodsInfo"    column="goods_info"    />
-        <result property="consignee"    column="consignee"    />
-        <result property="consigneePhone"    column="consignee_phone"    />
-        <result property="consigneeAddress"    column="consignee_address"    />
-        <result property="userRemark"    column="user_remark"    />
-        <result property="merchantRemark"    column="merchant_remark"    />
-        <result property="orderAmount"    column="order_amount"    />
+        <result property="customerId"    column="customer_id"    />
+        <result property="senderName"    column="sender_name"    />
+        <result property="senderPhone"    column="sender_phone"    />
+        <result property="senderVirtualPhone"    column="sender_virtual_phone"    />
+        <result property="senderAddress"    column="sender_address"    />
+        <result property="receiverName"    column="receiver_name"    />
+        <result property="receiverPhone"    column="receiver_phone"    />
+        <result property="receiverVirtualPhone"    column="receiver_virtual_phone"    />
+        <result property="receiverAddress"    column="receiver_address"    />
+        <result property="expressType"    column="express_type"    />
+        <result property="weight"    column="weight"    />
+        <result property="freight"    column="freight"    />
+        <result property="payStatus"    column="pay_status"    />
         <result property="payTime"    column="pay_time"    />
-        <result property="refundTime"    column="refund_time"    />
+        <result property="orderStatus"    column="order_status"    />
+        <result property="warehouseId"    column="warehouse_id"    />
+        <result property="vehicleId"    column="vehicle_id"    />
+        <result property="driverId"    column="driver_id"    />
+        <result property="waybillTemplateId"    column="waybill_template_id"    />
+        <result property="remark"    column="remark"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
@@ -28,47 +35,64 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectExpressOrderVo">
-        select order_id, order_no, pay_type, pay_channel, order_status, refund_status, goods_info, consignee, consignee_phone, consignee_address, user_remark, merchant_remark, order_amount, pay_time, refund_time, create_by, create_time, update_by, update_time, del_flag from express_order
+        select id, order_no, customer_id, sender_name, sender_phone, sender_virtual_phone, sender_address, receiver_name, receiver_phone, receiver_virtual_phone, receiver_address, express_type, weight, freight, pay_status, pay_time, order_status, warehouse_id, vehicle_id, driver_id, waybill_template_id, remark, create_by, create_time, update_by, update_time, del_flag from express_order
     </sql>
 
     <select id="selectExpressOrderList" parameterType="ExpressOrder" resultMap="ExpressOrderResult">
         <include refid="selectExpressOrderVo"/>
-        <where>
-            <if test="orderNo != null  and orderNo != ''"> and order_no like concat('%', #{orderNo}, '%')</if>
-            <if test="payType != null  and payType != ''"> and pay_type = #{payType}</if>
-            <if test="payChannel != null  and payChannel != ''"> and pay_channel = #{payChannel}</if>
+        <where>  
+            <if test="orderNo != null  and orderNo != ''"> and order_no = #{orderNo}</if>
+            <if test="customerId != null "> and customer_id = #{customerId}</if>
+            <if test="senderName != null  and senderName != ''"> and sender_name like concat('%', #{senderName}, '%')</if>
+            <if test="senderPhone != null  and senderPhone != ''"> and sender_phone = #{senderPhone}</if>
+            <if test="senderVirtualPhone != null  and senderVirtualPhone != ''"> and sender_virtual_phone = #{senderVirtualPhone}</if>
+            <if test="senderAddress != null  and senderAddress != ''"> and sender_address = #{senderAddress}</if>
+            <if test="receiverName != null  and receiverName != ''"> and receiver_name like concat('%', #{receiverName}, '%')</if>
+            <if test="receiverPhone != null  and receiverPhone != ''"> and receiver_phone = #{receiverPhone}</if>
+            <if test="receiverVirtualPhone != null  and receiverVirtualPhone != ''"> and receiver_virtual_phone = #{receiverVirtualPhone}</if>
+            <if test="receiverAddress != null  and receiverAddress != ''"> and receiver_address = #{receiverAddress}</if>
+            <if test="expressType != null  and expressType != ''"> and express_type = #{expressType}</if>
+            <if test="weight != null "> and weight = #{weight}</if>
+            <if test="freight != null "> and freight = #{freight}</if>
+            <if test="payStatus != null  and payStatus != ''"> and pay_status = #{payStatus}</if>
+            <if test="payTime != null "> and pay_time = #{payTime}</if>
             <if test="orderStatus != null  and orderStatus != ''"> and order_status = #{orderStatus}</if>
-            <if test="refundStatus != null  and refundStatus != ''"> and refund_status = #{refundStatus}</if>
+            <if test="warehouseId != null "> and warehouse_id = #{warehouseId}</if>
+            <if test="vehicleId != null "> and vehicle_id = #{vehicleId}</if>
+            <if test="driverId != null "> and driver_id = #{driverId}</if>
+            <if test="waybillTemplateId != null "> and waybill_template_id = #{waybillTemplateId}</if>
         </where>
     </select>
-
-    <select id="selectExpressOrderByOrderId" parameterType="Long" resultMap="ExpressOrderResult">
+    
+    <select id="selectExpressOrderById" parameterType="Long" resultMap="ExpressOrderResult">
         <include refid="selectExpressOrderVo"/>
-        where order_id = #{orderId}
+        where id = #{id}
     </select>
 
-    <select id="selectExpressOrderByOrderNo" parameterType="String" resultMap="ExpressOrderResult">
-        <include refid="selectExpressOrderVo"/>
-        where order_no = #{orderNo} and del_flag = '0'
-    </select>
-
-    <insert id="insertExpressOrder" parameterType="ExpressOrder" useGeneratedKeys="true" keyProperty="orderId">
+    <insert id="insertExpressOrder" parameterType="ExpressOrder" useGeneratedKeys="true" keyProperty="id">
         insert into express_order
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="orderNo != null and orderNo != ''">order_no,</if>
-            <if test="payType != null">pay_type,</if>
-            <if test="payChannel != null">pay_channel,</if>
-            <if test="orderStatus != null">order_status,</if>
-            <if test="refundStatus != null">refund_status,</if>
-            <if test="goodsInfo != null and goodsInfo != ''">goods_info,</if>
-            <if test="consignee != null and consignee != ''">consignee,</if>
-            <if test="consigneePhone != null and consigneePhone != ''">consignee_phone,</if>
-            <if test="consigneeAddress != null and consigneeAddress != ''">consignee_address,</if>
-            <if test="userRemark != null">user_remark,</if>
-            <if test="merchantRemark != null">merchant_remark,</if>
-            <if test="orderAmount != null">order_amount,</if>
+            <if test="customerId != null">customer_id,</if>
+            <if test="senderName != null and senderName != ''">sender_name,</if>
+            <if test="senderPhone != null and senderPhone != ''">sender_phone,</if>
+            <if test="senderVirtualPhone != null">sender_virtual_phone,</if>
+            <if test="senderAddress != null and senderAddress != ''">sender_address,</if>
+            <if test="receiverName != null and receiverName != ''">receiver_name,</if>
+            <if test="receiverPhone != null and receiverPhone != ''">receiver_phone,</if>
+            <if test="receiverVirtualPhone != null">receiver_virtual_phone,</if>
+            <if test="receiverAddress != null and receiverAddress != ''">receiver_address,</if>
+            <if test="expressType != null and expressType != ''">express_type,</if>
+            <if test="weight != null">weight,</if>
+            <if test="freight != null">freight,</if>
+            <if test="payStatus != null and payStatus != ''">pay_status,</if>
             <if test="payTime != null">pay_time,</if>
-            <if test="refundTime != null">refund_time,</if>
+            <if test="orderStatus != null and orderStatus != ''">order_status,</if>
+            <if test="warehouseId != null">warehouse_id,</if>
+            <if test="vehicleId != null">vehicle_id,</if>
+            <if test="driverId != null">driver_id,</if>
+            <if test="waybillTemplateId != null">waybill_template_id,</if>
+            <if test="remark != null">remark,</if>
             <if test="createBy != null">create_by,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null">update_by,</if>
@@ -77,19 +101,26 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="orderNo != null and orderNo != ''">#{orderNo},</if>
-            <if test="payType != null">#{payType},</if>
-            <if test="payChannel != null">#{payChannel},</if>
-            <if test="orderStatus != null">#{orderStatus},</if>
-            <if test="refundStatus != null">#{refundStatus},</if>
-            <if test="goodsInfo != null and goodsInfo != ''">#{goodsInfo},</if>
-            <if test="consignee != null and consignee != ''">#{consignee},</if>
-            <if test="consigneePhone != null and consigneePhone != ''">#{consigneePhone},</if>
-            <if test="consigneeAddress != null and consigneeAddress != ''">#{consigneeAddress},</if>
-            <if test="userRemark != null">#{userRemark},</if>
-            <if test="merchantRemark != null">#{merchantRemark},</if>
-            <if test="orderAmount != null">#{orderAmount},</if>
+            <if test="customerId != null">#{customerId},</if>
+            <if test="senderName != null and senderName != ''">#{senderName},</if>
+            <if test="senderPhone != null and senderPhone != ''">#{senderPhone},</if>
+            <if test="senderVirtualPhone != null">#{senderVirtualPhone},</if>
+            <if test="senderAddress != null and senderAddress != ''">#{senderAddress},</if>
+            <if test="receiverName != null and receiverName != ''">#{receiverName},</if>
+            <if test="receiverPhone != null and receiverPhone != ''">#{receiverPhone},</if>
+            <if test="receiverVirtualPhone != null">#{receiverVirtualPhone},</if>
+            <if test="receiverAddress != null and receiverAddress != ''">#{receiverAddress},</if>
+            <if test="expressType != null and expressType != ''">#{expressType},</if>
+            <if test="weight != null">#{weight},</if>
+            <if test="freight != null">#{freight},</if>
+            <if test="payStatus != null and payStatus != ''">#{payStatus},</if>
             <if test="payTime != null">#{payTime},</if>
-            <if test="refundTime != null">#{refundTime},</if>
+            <if test="orderStatus != null and orderStatus != ''">#{orderStatus},</if>
+            <if test="warehouseId != null">#{warehouseId},</if>
+            <if test="vehicleId != null">#{vehicleId},</if>
+            <if test="driverId != null">#{driverId},</if>
+            <if test="waybillTemplateId != null">#{waybillTemplateId},</if>
+            <if test="remark != null">#{remark},</if>
             <if test="createBy != null">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
@@ -102,48 +133,43 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update express_order
         <trim prefix="SET" suffixOverrides=",">
             <if test="orderNo != null and orderNo != ''">order_no = #{orderNo},</if>
-            <if test="payType != null">pay_type = #{payType},</if>
-            <if test="payChannel != null">pay_channel = #{payChannel},</if>
-            <if test="orderStatus != null">order_status = #{orderStatus},</if>
-            <if test="refundStatus != null">refund_status = #{refundStatus},</if>
-            <if test="goodsInfo != null and goodsInfo != ''">goods_info = #{goodsInfo},</if>
-            <if test="consignee != null and consignee != ''">consignee = #{consignee},</if>
-            <if test="consigneePhone != null and consigneePhone != ''">consignee_phone = #{consigneePhone},</if>
-            <if test="consigneeAddress != null and consigneeAddress != ''">consignee_address = #{consigneeAddress},</if>
-            <if test="userRemark != null">user_remark = #{userRemark},</if>
-            <if test="merchantRemark != null">merchant_remark = #{merchantRemark},</if>
-            <if test="orderAmount != null">order_amount = #{orderAmount},</if>
+            <if test="customerId != null">customer_id = #{customerId},</if>
+            <if test="senderName != null and senderName != ''">sender_name = #{senderName},</if>
+            <if test="senderPhone != null and senderPhone != ''">sender_phone = #{senderPhone},</if>
+            <if test="senderVirtualPhone != null">sender_virtual_phone = #{senderVirtualPhone},</if>
+            <if test="senderAddress != null and senderAddress != ''">sender_address = #{senderAddress},</if>
+            <if test="receiverName != null and receiverName != ''">receiver_name = #{receiverName},</if>
+            <if test="receiverPhone != null and receiverPhone != ''">receiver_phone = #{receiverPhone},</if>
+            <if test="receiverVirtualPhone != null">receiver_virtual_phone = #{receiverVirtualPhone},</if>
+            <if test="receiverAddress != null and receiverAddress != ''">receiver_address = #{receiverAddress},</if>
+            <if test="expressType != null and expressType != ''">express_type = #{expressType},</if>
+            <if test="weight != null">weight = #{weight},</if>
+            <if test="freight != null">freight = #{freight},</if>
+            <if test="payStatus != null and payStatus != ''">pay_status = #{payStatus},</if>
             <if test="payTime != null">pay_time = #{payTime},</if>
-            <if test="refundTime != null">refund_time = #{refundTime},</if>
+            <if test="orderStatus != null and orderStatus != ''">order_status = #{orderStatus},</if>
+            <if test="warehouseId != null">warehouse_id = #{warehouseId},</if>
+            <if test="vehicleId != null">vehicle_id = #{vehicleId},</if>
+            <if test="driverId != null">driver_id = #{driverId},</if>
+            <if test="waybillTemplateId != null">waybill_template_id = #{waybillTemplateId},</if>
+            <if test="remark != null">remark = #{remark},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="delFlag != null">del_flag = #{delFlag},</if>
         </trim>
-        where order_id = #{orderId}
+        where id = #{id}
     </update>
 
-    <delete id="deleteExpressOrderByOrderId" parameterType="Long">
-        delete from express_order where order_id = #{orderId}
+    <delete id="deleteExpressOrderById" parameterType="Long">
+        delete from express_order where id = #{id}
     </delete>
 
-    <delete id="deleteExpressOrderByOrderIds" parameterType="String">
-        delete from express_order where order_id in
-        <foreach item="orderId" collection="array" open="(" separator="," close=")">
-            #{orderId}
+    <delete id="deleteExpressOrderByIds" parameterType="String">
+        delete from express_order where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
         </foreach>
     </delete>
-
-    <insert id="batchInsertExpressOrder" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="orderId">
-        insert into express_order
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            order_no, pay_type, pay_channel, order_status, refund_status, goods_info, consignee, consignee_phone, consignee_address, user_remark, merchant_remark, order_amount, pay_time, refund_time, create_by, create_time, update_by, update_time, del_flag
-        </trim>
-        <foreach collection="list" item="item" separator=",">
-            <trim prefix="values (" suffix=")" suffixOverrides=",">
-                #{item.orderNo}, #{item.payType}, #{item.payChannel}, #{item.orderStatus}, #{item.refundStatus}, #{item.goodsInfo}, #{item.consignee}, #{item.consigneePhone}, #{item.consigneeAddress}, #{item.userRemark}, #{item.merchantRemark}, #{item.orderAmount}, #{item.payTime}, #{item.refundTime}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.delFlag}
-            </trim>
-        </foreach>
-    </insert>
 </mapper>

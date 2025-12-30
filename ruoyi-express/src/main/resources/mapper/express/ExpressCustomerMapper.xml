@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.express.mapper.ExpressCustomerMapper">
+    
+    <resultMap type="ExpressCustomer" id="ExpressCustomerResult">
+        <result property="id"    column="id"    />
+        <result property="customerName"    column="customer_name"    />
+        <result property="customerPhone"    column="customer_phone"    />
+        <result property="customerType"    column="customer_type"    />
+        <result property="companyName"    column="company_name"    />
+        <result property="defaultAddress"    column="default_address"    />
+        <result property="totalOrder"    column="total_order"    />
+        <result property="totalAmount"    column="total_amount"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectExpressCustomerVo">
+        select id, customer_name, customer_phone, customer_type, company_name, default_address, total_order, total_amount, create_by, create_time, update_by, update_time, del_flag from express_customer
+    </sql>
+
+    <select id="selectExpressCustomerList" parameterType="ExpressCustomer" resultMap="ExpressCustomerResult">
+        <include refid="selectExpressCustomerVo"/>
+        <where>  
+            <if test="customerName != null  and customerName != ''"> and customer_name like concat('%', #{customerName}, '%')</if>
+            <if test="customerPhone != null  and customerPhone != ''"> and customer_phone = #{customerPhone}</if>
+            <if test="customerType != null  and customerType != ''"> and customer_type = #{customerType}</if>
+            <if test="companyName != null  and companyName != ''"> and company_name like concat('%', #{companyName}, '%')</if>
+            <if test="defaultAddress != null  and defaultAddress != ''"> and default_address = #{defaultAddress}</if>
+            <if test="totalOrder != null "> and total_order = #{totalOrder}</if>
+            <if test="totalAmount != null "> and total_amount = #{totalAmount}</if>
+        </where>
+    </select>
+    
+    <select id="selectExpressCustomerById" parameterType="Long" resultMap="ExpressCustomerResult">
+        <include refid="selectExpressCustomerVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertExpressCustomer" parameterType="ExpressCustomer" useGeneratedKeys="true" keyProperty="id">
+        insert into express_customer
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="customerName != null and customerName != ''">customer_name,</if>
+            <if test="customerPhone != null and customerPhone != ''">customer_phone,</if>
+            <if test="customerType != null and customerType != ''">customer_type,</if>
+            <if test="companyName != null">company_name,</if>
+            <if test="defaultAddress != null">default_address,</if>
+            <if test="totalOrder != null">total_order,</if>
+            <if test="totalAmount != null">total_amount,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="customerName != null and customerName != ''">#{customerName},</if>
+            <if test="customerPhone != null and customerPhone != ''">#{customerPhone},</if>
+            <if test="customerType != null and customerType != ''">#{customerType},</if>
+            <if test="companyName != null">#{companyName},</if>
+            <if test="defaultAddress != null">#{defaultAddress},</if>
+            <if test="totalOrder != null">#{totalOrder},</if>
+            <if test="totalAmount != null">#{totalAmount},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateExpressCustomer" parameterType="ExpressCustomer">
+        update express_customer
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="customerName != null and customerName != ''">customer_name = #{customerName},</if>
+            <if test="customerPhone != null and customerPhone != ''">customer_phone = #{customerPhone},</if>
+            <if test="customerType != null and customerType != ''">customer_type = #{customerType},</if>
+            <if test="companyName != null">company_name = #{companyName},</if>
+            <if test="defaultAddress != null">default_address = #{defaultAddress},</if>
+            <if test="totalOrder != null">total_order = #{totalOrder},</if>
+            <if test="totalAmount != null">total_amount = #{totalAmount},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteExpressCustomerById" parameterType="Long">
+        delete from express_customer where id = #{id}
+    </delete>
+
+    <delete id="deleteExpressCustomerByIds" parameterType="String">
+        delete from express_customer where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

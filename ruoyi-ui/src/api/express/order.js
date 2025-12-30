@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-// 查询订单管理列表
+// 查询快递订单列表
 export function listOrder(query) {
   return request({
     url: '/express/order/list',
@@ -9,15 +9,15 @@ export function listOrder(query) {
   })
 }
 
-// 查询订单管理详细
-export function getOrder(orderId) {
+// 查询快递订单详细
+export function getOrder(id) {
   return request({
-    url: '/express/order/' + orderId,
+    url: '/express/order/' + id,
     method: 'get'
   })
 }
 
-// 新增订单管理
+// 新增快递订单
 export function addOrder(data) {
   return request({
     url: '/express/order',
@@ -26,7 +26,7 @@ export function addOrder(data) {
   })
 }
 
-// 修改订单管理
+// 修改快递订单
 export function updateOrder(data) {
   return request({
     url: '/express/order',
@@ -35,27 +35,19 @@ export function updateOrder(data) {
   })
 }
 
-// 删除订单管理
-export function delOrder(orderId) {
+// 删除快递订单
+export function delOrder(id) {
   return request({
-    url: '/express/order/' + orderId,
+    url: '/express/order/' + id,
     method: 'delete'
   })
 }
 
-// 导入订单管理
-export function importOrder(data) {
+// 批量查询订单（根据ID数组）
+export function getOrdersByIds(ids) {
   return request({
-    url: '/express/order/importData',
+    url: '/express/order/ids',
     method: 'post',
-    data: data
-  })
-}
-
-// 下载导入模板
-export function importTemplate() {
-  return request({
-    url: '/express/order/importTemplate',
-    method: 'get'
+    data: ids
   })
 }

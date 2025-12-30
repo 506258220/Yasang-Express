@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.express.mapper.ExpressVehicleMapper">
+    
+    <resultMap type="ExpressVehicle" id="ExpressVehicleResult">
+        <result property="id"    column="id"    />
+        <result property="vehicleNo"    column="vehicle_no"    />
+        <result property="vehicleType"    column="vehicle_type"    />
+        <result property="loadWeight"    column="load_weight"    />
+        <result property="loadVolume"    column="load_volume"    />
+        <result property="gpsDeviceNo"    column="gps_device_no"    />
+        <result property="driverId"    column="driver_id"    />
+        <result property="status"    column="status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectExpressVehicleVo">
+        select id, vehicle_no, vehicle_type, load_weight, load_volume, gps_device_no, driver_id, status, remark, create_by, create_time, update_by, update_time, del_flag from express_vehicle
+    </sql>
+
+    <select id="selectExpressVehicleList" parameterType="ExpressVehicle" resultMap="ExpressVehicleResult">
+        <include refid="selectExpressVehicleVo"/>
+        <where>  
+            <if test="vehicleNo != null  and vehicleNo != ''"> and vehicle_no = #{vehicleNo}</if>
+            <if test="vehicleType != null  and vehicleType != ''"> and vehicle_type = #{vehicleType}</if>
+            <if test="loadWeight != null "> and load_weight = #{loadWeight}</if>
+            <if test="loadVolume != null "> and load_volume = #{loadVolume}</if>
+            <if test="gpsDeviceNo != null  and gpsDeviceNo != ''"> and gps_device_no = #{gpsDeviceNo}</if>
+            <if test="driverId != null "> and driver_id = #{driverId}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectExpressVehicleById" parameterType="Long" resultMap="ExpressVehicleResult">
+        <include refid="selectExpressVehicleVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertExpressVehicle" parameterType="ExpressVehicle" useGeneratedKeys="true" keyProperty="id">
+        insert into express_vehicle
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="vehicleNo != null and vehicleNo != ''">vehicle_no,</if>
+            <if test="vehicleType != null and vehicleType != ''">vehicle_type,</if>
+            <if test="loadWeight != null">load_weight,</if>
+            <if test="loadVolume != null">load_volume,</if>
+            <if test="gpsDeviceNo != null and gpsDeviceNo != ''">gps_device_no,</if>
+            <if test="driverId != null">driver_id,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="vehicleNo != null and vehicleNo != ''">#{vehicleNo},</if>
+            <if test="vehicleType != null and vehicleType != ''">#{vehicleType},</if>
+            <if test="loadWeight != null">#{loadWeight},</if>
+            <if test="loadVolume != null">#{loadVolume},</if>
+            <if test="gpsDeviceNo != null and gpsDeviceNo != ''">#{gpsDeviceNo},</if>
+            <if test="driverId != null">#{driverId},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateExpressVehicle" parameterType="ExpressVehicle">
+        update express_vehicle
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="vehicleNo != null and vehicleNo != ''">vehicle_no = #{vehicleNo},</if>
+            <if test="vehicleType != null and vehicleType != ''">vehicle_type = #{vehicleType},</if>
+            <if test="loadWeight != null">load_weight = #{loadWeight},</if>
+            <if test="loadVolume != null">load_volume = #{loadVolume},</if>
+            <if test="gpsDeviceNo != null and gpsDeviceNo != ''">gps_device_no = #{gpsDeviceNo},</if>
+            <if test="driverId != null">driver_id = #{driverId},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteExpressVehicleById" parameterType="Long">
+        delete from express_vehicle where id = #{id}
+    </delete>
+
+    <delete id="deleteExpressVehicleByIds" parameterType="String">
+        delete from express_vehicle where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

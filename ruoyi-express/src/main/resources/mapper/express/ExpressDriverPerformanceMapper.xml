@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.express.mapper.ExpressDriverPerformanceMapper">
+    
+    <resultMap type="ExpressDriverPerformance" id="ExpressDriverPerformanceResult">
+        <result property="id"    column="id"    />
+        <result property="driverId"    column="driver_id"    />
+        <result property="statisticDate"    column="statistic_date"    />
+        <result property="receiveCount"    column="receive_count"    />
+        <result property="deliverCount"    column="deliver_count"    />
+        <result property="exceptionCount"    column="exception_count"    />
+        <result property="performanceAmount"    column="performance_amount"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectExpressDriverPerformanceVo">
+        select id, driver_id, statistic_date, receive_count, deliver_count, exception_count, performance_amount, create_by, create_time, update_by, update_time, del_flag from express_driver_performance
+    </sql>
+
+    <select id="selectExpressDriverPerformanceList" parameterType="ExpressDriverPerformance" resultMap="ExpressDriverPerformanceResult">
+        <include refid="selectExpressDriverPerformanceVo"/>
+        <where>  
+            <if test="driverId != null "> and driver_id = #{driverId}</if>
+            <if test="statisticDate != null "> and statistic_date = #{statisticDate}</if>
+            <if test="receiveCount != null "> and receive_count = #{receiveCount}</if>
+            <if test="deliverCount != null "> and deliver_count = #{deliverCount}</if>
+            <if test="exceptionCount != null "> and exception_count = #{exceptionCount}</if>
+            <if test="performanceAmount != null "> and performance_amount = #{performanceAmount}</if>
+        </where>
+    </select>
+    
+    <select id="selectExpressDriverPerformanceById" parameterType="Long" resultMap="ExpressDriverPerformanceResult">
+        <include refid="selectExpressDriverPerformanceVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertExpressDriverPerformance" parameterType="ExpressDriverPerformance" useGeneratedKeys="true" keyProperty="id">
+        insert into express_driver_performance
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="driverId != null">driver_id,</if>
+            <if test="statisticDate != null">statistic_date,</if>
+            <if test="receiveCount != null">receive_count,</if>
+            <if test="deliverCount != null">deliver_count,</if>
+            <if test="exceptionCount != null">exception_count,</if>
+            <if test="performanceAmount != null">performance_amount,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="driverId != null">#{driverId},</if>
+            <if test="statisticDate != null">#{statisticDate},</if>
+            <if test="receiveCount != null">#{receiveCount},</if>
+            <if test="deliverCount != null">#{deliverCount},</if>
+            <if test="exceptionCount != null">#{exceptionCount},</if>
+            <if test="performanceAmount != null">#{performanceAmount},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateExpressDriverPerformance" parameterType="ExpressDriverPerformance">
+        update express_driver_performance
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="driverId != null">driver_id = #{driverId},</if>
+            <if test="statisticDate != null">statistic_date = #{statisticDate},</if>
+            <if test="receiveCount != null">receive_count = #{receiveCount},</if>
+            <if test="deliverCount != null">deliver_count = #{deliverCount},</if>
+            <if test="exceptionCount != null">exception_count = #{exceptionCount},</if>
+            <if test="performanceAmount != null">performance_amount = #{performanceAmount},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteExpressDriverPerformanceById" parameterType="Long">
+        delete from express_driver_performance where id = #{id}
+    </delete>
+
+    <delete id="deleteExpressDriverPerformanceByIds" parameterType="String">
+        delete from express_driver_performance where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

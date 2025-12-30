@@ -10,8 +10,10 @@
       :on-error="handleUploadError"
       :on-exceed="handleExceed"
       :on-success="handleUploadSuccess"
-      :show-file-list="false"
+      :on-change="handleChange"
+      :show-file-list="true"
       :headers="headers"
+      :auto-upload="autoUpload"
       class="upload-file-uploader"
       ref="fileUpload"
       v-if="!disabled"
@@ -88,6 +90,11 @@ export default {
     drag: {
       type: Boolean,
       default: true
+    },
+    // 是否自动上传
+    autoUpload: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -105,7 +112,7 @@ export default {
   mounted() {
     if (this.drag && !this.disabled) {
       this.$nextTick(() => {
-        const element = this.$refs.uploadFileList?.$el || this.$refs.uploadFileList
+        const element = this.$refs.uploadFileList && this.$refs.uploadFileList.$el ? this.$refs.uploadFileList.$el : this.$refs.uploadFileList
         Sortable.create(element, {
           ghostClass: 'file-upload-darg',
           onEnd: (evt) => {
@@ -122,16 +129,25 @@ export default {
       handler(val) {
         if (val) {
           let temp = 1
-          // 首先将值转为数组
-          const list = Array.isArray(val) ? val : this.value.split(',')
-          // 然后将数组转为对象数组
-          this.fileList = list.map(item => {
-            if (typeof item === "string") {
-              item = { name: item, url: item }
-            }
-            item.uid = item.uid || new Date().getTime() + temp++
-            return item
-          })
+          // 首先检查是否为数组格式的文件列表
+          if (Array.isArray(val) && val.length > 0 && typeof val[0] === 'object') {
+            // 如果是对象数组，直接使用
+            this.fileList = val.map(item => {
+              item.uid = item.uid || new Date().getTime() + temp++
+              return item
+            })
+          } else {
+            // 否则按原逻辑处理字符串格式
+            const list = Array.isArray(val) ? val : this.value.split(',')
+            // 然后将数组转为对象数组
+            this.fileList = list.map(item => {
+              if (typeof item === "string") {
+                item = { name: item, url: item }
+              }
+              item.uid = item.uid || new Date().getTime() + temp++
+              return item
+            })
+          }
         } else {
           this.fileList = []
           return []
@@ -191,6 +207,8 @@ export default {
       if (res.code === 200) {
         this.uploadList.push({ name: res.fileName, url: res.fileName })
         this.uploadedSuccessfully()
+        // 导入成功后通知父组件
+        this.$emit('import-success', res)
       } else {
         this.number--
         this.$modal.closeLoading()
@@ -202,7 +220,7 @@ export default {
     // 删除文件
     handleDelete(index) {
       this.fileList.splice(index, 1)
-      this.$emit("input", this.listToString(this.fileList))
+      this.$emit("input", this.fileList)
     },
     // 上传结束处理
     uploadedSuccessfully() {
@@ -210,7 +228,7 @@ export default {
         this.fileList = this.fileList.concat(this.uploadList)
         this.uploadList = []
         this.number = 0
-        this.$emit("input", this.listToString(this.fileList))
+        this.$emit("input", this.fileList)
         this.$modal.closeLoading()
       }
     },
@@ -231,6 +249,17 @@ export default {
         strs += list[i].url + separator
       }
       return strs != '' ? strs.substr(0, strs.length - 1) : ''
+    },
+
+    // 手动触发上传
+    submit() {
+      this.$refs.fileUpload.submit()
+    },
+
+    // 文件选择变化处理
+    handleChange(file, fileList) {
+      this.fileList = fileList
+      this.$emit("input", this.fileList)
     }
   }
 }

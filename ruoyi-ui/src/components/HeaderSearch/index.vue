@@ -173,7 +173,8 @@ export default {
     querySearch(query) {
       this.activeIndex = -1
       if (query !== '') {
-        this.options = this.fuse.search(query).map((item) => item.item) ?? this.searchPool
+        const searchResult = this.fuse.search(query).map((item) => item.item)
+        this.options = searchResult !== null && searchResult !== undefined ? searchResult : this.searchPool
       } else {
         this.options = this.searchPool
       }

@@ -12,7 +12,15 @@
     >
       <!-- 文本元素 -->
       <template v-if="elem.type === 'text'">
-        <div class="content text-content">{{ replacePlaceholders(elem.content) }}</div>
+        <div 
+          class="content text-content" 
+          :style="{
+            fontSize: `${elem.fontSize || 14}px`,
+            color: elem.fontColor || '#000',
+            textAlign: elem.textAlign || 'left',
+            lineHeight: `${(elem.fontSize || 14) * 1.5}px`
+          }"
+        >{{ replacePlaceholders(elem.content) }}</div>
       </template>
       <!-- 时间元素 -->
       <template v-else-if="elem.type === 'time'">
@@ -182,10 +190,14 @@ export default {
         backgroundColor: 'transparent'
       };
       
-      // 为所有元素添加基础样式
-      style.display = 'flex';
-      style.justifyContent = 'center';
-      style.alignItems = 'center';
+      // 为非文本元素添加基础样式
+      if (elem.type !== 'text') {
+        style.display = 'flex';
+        style.justifyContent = 'center';
+        style.alignItems = 'center';
+      } else {
+        style.display = 'block';
+      }
       
       // 为线条元素添加样式
       if (['hline', 'vline', 'diagonal'].includes(elem.type)) {
@@ -228,14 +240,7 @@ export default {
         if (!elem.width) style.width = '50mm';
         if (!elem.height) style.height = '20mm';
         
-        style.fontSize = `${elem.fontSize || 14}px`;
-        style.color = elem.fontColor || '#000';
-        style.textAlign = elem.textAlign || 'left';
-        style.fontFamily = elem.fontFamily || 'Microsoft Yahei, sans-serif';
-        style.fontWeight = elem.fontWeight || 'normal';
-        style.fontStyle = elem.fontStyle || 'normal';
-        style.lineHeight = elem.lineHeight || '1';
-        style.justifyContent = 'flex-start';
+        // 文本样式由模板中的内联样式绑定处理
         style.padding = '2px';
       }
       // 时间元素
@@ -284,13 +289,13 @@ export default {
         if (!elem.width) style.width = '60mm';
         if (!elem.height) style.height = '20mm';
         
-        style.position = 'relative';
-        // 为条形码元素添加旋转支持
+        // 使用CSS变量设置旋转
         if (elem.rotation) {
           style['--rotation'] = `${elem.rotation}deg`;
-          style.transform = `rotate(var(--rotation))`;
-          style.transformOrigin = 'center center';
         }
+        
+        // 确保使用绝对定位，与TemplateDesign一致
+        style.position = 'absolute';
       }
       // 二维码元素
       else if (elem.type === 'qrcode') {
@@ -342,9 +347,11 @@ export default {
               try {
                 const content = this.replacePlaceholders(elem.content || '123456789012');
                 
-                // 设置canvas尺寸以匹配组件尺寸
+                // 设置canvas尺寸以匹配组件尺寸（确保高DPI显示清晰）
                 const canvasWidth = elem.width * 3.779528; // 转换为像素
                 const canvasHeight = elem.height * 3.779528; // 转换为像素
+                
+                // 设置canvas的像素尺寸
                 canvas.width = canvasWidth;
                 canvas.height = canvasHeight;
                 
@@ -397,9 +404,13 @@ export default {
                 const barsPerChar = 11; // CODE128大约每个字符11个条
                 const totalBars = content.length * barsPerChar;
                 
-                // 计算合适的条宽度，确保至少为0.5px
-                let barWidth = Math.max(0.5, availableWidth / totalBars);
+                // 计算合适的条宽度，确保至少为0.75px以避免模糊，同时不超过2px
+                let barWidth = Math.max(0.75, Math.min(2, availableWidth / totalBars));
                 
+                // 确保barWidth是0.25px的倍数，提高渲染清晰度
+                barWidth = Math.round(barWidth * 4) / 4;
+                
+                // 使用与TemplateDesign一致的JsBarcode配置
                 JsBarcode(canvas, content, {
                   format: elem.barcodeType || 'CODE128',
                   width: barWidth,
@@ -493,13 +504,7 @@ export default {
 
 /* 元素样式 */
 .canvas-element .content {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   overflow: hidden;
-  box-sizing: border-box;
 }
 
 /* 图标元素 */
@@ -545,12 +550,28 @@ export default {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1024 1024'%3E%3Cpath d='M908.1 353.1l-253.9-36.9L540.7 86.1c-3.1-6.3-8.2-11.4-14.5-14.5-15.8-7.8-35-1.3-42.9 14.5L369.8 316.2l-253.9 36.9c-7 1-13.4 4.3-18.3 9.3a32.05 32.05 0 0 0 .6 45.3l183.7 179.1-43.4 252.9a31.95 31.95 0 0 0 46.4 33.7L512 829.3l227.1 119.4c6.2 3.3 13.4 4.4 20.3 3.2 17.4-3 29.1-19.5 26.1-36.9l-43.4-252.9 183.7-179.1c5-4.9 8.3-11.3 9.3-18.3 2.7-17.5-9.5-33.7-27-36.4z'/%3E%3C/svg%3E");
 }
 
-/* 文本元素 */
+/* 文本元素容器 */
+.elem-text {
+  /* 与TemplateDesign完全一致的容器样式 */
+  width: 50mm;
+  height: 20mm;
+  padding: 2px;
+}
+
+/* 文本元素内容 */
 .elem-text .text-content {
-  justify-content: flex-start;
+  /* 与TemplateDesign完全一致的样式 */
+  width: 100%;
+  height: 100%;
+  outline: none;
+  color: #000;
   white-space: normal;
   word-break: break-word;
-  padding: 2px;
+  /* 明确覆盖通用.content类的flex布局 */
+  display: block;
+  /* 移除flex相关属性 */
+  align-items: normal;
+  justify-content: normal;
 }
 
 /* 时间元素 */
@@ -562,19 +583,24 @@ export default {
 
 /* 条形码元素 */
 .elem-barcode {
+  width: 60mm;
+  height: 20mm;
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 12px;
   color: #666;
-  position: relative;
+  /* 移除position: relative，避免与绝对定位冲突 */
+  /* position: relative; */
   transform: rotate(var(--rotation, 0deg));
   transform-origin: center center;
 }
 
+.elem-barcode .content,
 .elem-barcode .barcode-content {
-  width: 100%;
-  height: 100%;
+  display: block;
+  font-size: 0;
+  line-height: 0;
 }
 
 /* 二维码元素 */

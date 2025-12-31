@@ -911,69 +911,90 @@ export default {
       }
       if (!barcodeCanvas) return
 
-      // 设置canvas尺寸以匹配组件尺寸
-      const canvasWidth = elem.width * 3.779528 // 转换为像素
-      const canvasHeight = elem.height * 3.779528 // 转换为像素
+      // 处理可能的数组情况（Vue 2中动态refs可能返回数组）
+      if (Array.isArray(barcodeCanvas)) {
+        barcodeCanvas = barcodeCanvas[0]
+      }
+
+      // 确保barcodeCanvas是一个Canvas元素
+      if (!(barcodeCanvas instanceof HTMLCanvasElement)) {
+        console.error('barcodeCanvas is not a Canvas element:', barcodeCanvas)
+        return
+      }
+
+      // 降低Canvas分辨率，使用1.5倍标准像素密度，减少渲染压力
+      const pixelsPerMm = 3.779528 * 1.5 // 1mm = 5.669292px
+      const canvasWidth = Math.floor(elem.width * pixelsPerMm) // 转换为像素
+      const canvasHeight = Math.floor(elem.height * pixelsPerMm) // 转换为像素
       barcodeCanvas.width = canvasWidth
       barcodeCanvas.height = canvasHeight
+
+      // 设置CSS样式，确保canvas显示尺寸与组件尺寸一致
+      barcodeCanvas.style.width = `${elem.width}mm`
+      barcodeCanvas.style.height = `${elem.height}mm`
 
       // 动态计算文字高度和大小，根据canvas尺寸调整
       const content = elem.content || '123456789012'
 
-      // 动态设置margin，根据canvas尺寸调整，确保留白合理
-      const margin = Math.max(2, Math.min(5, canvasWidth * 0.02)) // 2-5px之间，根据宽度动态调整
-      const marginVertical = Math.max(2, Math.min(4, canvasHeight * 0.03)) // 垂直方向margin，稍大一些确保不会紧贴边框
+      // 动态设置margin，确保条形码完全填充容器
+      const margin = 0 // 左右margin设为0px，确保条形码完全填充容器
+      const marginVertical = Math.max(1, Math.floor(canvasHeight * 0.02)) // 垂直方向margin
 
       // 计算总可用高度（减去上下margin）
       const availableHeight = canvasHeight - marginVertical * 2
 
-      // 动态计算文字高度（占可用高度的15-25%）
-      const textHeightRatio = 0.2 // 文字高度占可用高度的比例
+      // 动态计算文字高度（占可用高度的合理比例）
+      const textHeightRatio = elem.dataPosition !== 'none' ? 0.2 : 0 // 文字高度占可用高度的比例
       let textHeight = 0
       let textSize = 0
 
       if (elem.dataPosition !== 'none') {
         // 计算文字高度，确保有足够空间
-        textHeight = Math.max(10, Math.min(18, availableHeight * textHeightRatio))
+        textHeight = Math.max(12, Math.min(24, Math.floor(availableHeight * textHeightRatio)))
         // 动态计算文字大小（与文字高度成比例）
-        textSize = Math.max(7, Math.min(12, textHeight * 0.75)) // 文字大小约为文字高度的75%
+        textSize = Math.max(10, Math.min(16, Math.floor(textHeight * 0.8))) // 文字大小约为文字高度的80%
       }
 
       // 计算条形码主体高度，确保不会超出可用高度
       const barcodeHeight = elem.dataPosition !== 'none' ?
         (availableHeight - textHeight) : availableHeight
 
-      // 确保条形码高度至少为10px，并且总和不会超出canvas高度
-      let finalBarcodeHeight = Math.max(10, Math.min(barcodeHeight, availableHeight))
+      // 确保条形码高度至少为16px，并且总和不会超出canvas高度
+      let finalBarcodeHeight = Math.max(16, Math.min(barcodeHeight, availableHeight))
 
       // 最后的安全检查：确保所有部分总和不超过canvas高度
       let totalHeight = marginVertical * 2 + finalBarcodeHeight + (elem.dataPosition !== 'none' ? textHeight : 0)
       if (totalHeight > canvasHeight) {
-        // 如果总高度超出，按比例缩小各部分
-        const scaleRatio = canvasHeight / totalHeight
-
-        if (elem.dataPosition !== 'none') {
-          // 按比例缩小文字高度和大小
-          textHeight *= scaleRatio
-          textSize *= scaleRatio
+        // 如果总高度超出，优先减少文字高度
+        if (elem.dataPosition !== 'none' && textHeight > 10) {
+          const heightExcess = totalHeight - canvasHeight
+          const textHeightReduction = Math.min(heightExcess, textHeight - 10)
+          textHeight -= textHeightReduction
+          textSize = Math.max(10, Math.floor(textSize * (textHeight / (textHeight + textHeightReduction))))
+        } else {
+          // 如果文字高度无法减少，减少条形码高度
+          finalBarcodeHeight = Math.max(12, finalBarcodeHeight - (totalHeight - canvasHeight))
         }
-
-        // 按比例缩小条形码高度
-        finalBarcodeHeight = Math.max(8, finalBarcodeHeight * scaleRatio)
-
-        // 再次检查总高度
-        totalHeight = marginVertical * 2 + finalBarcodeHeight + (elem.dataPosition !== 'none' ? textHeight : 0)
       }
 
       // 动态计算条形码条宽度，使条形码适应canvas宽度
       const availableWidth = canvasWidth - margin * 2
 
-      // 估算每个字符需要的条宽度数量（不同条形码类型可能不同，这里使用CODE128的估算值）
-      const barsPerChar = 11 // CODE128大约每个字符11个条
+      // 根据条形码类型调整每字符的条数
+      let barsPerChar = 11 // CODE128默认值
+      if (['CODE39', 'EAN13', 'EAN8', 'UPCA', 'UPCE'].includes(elem.barcodeType)) {
+        barsPerChar = 7 // 其他条形码类型使用较少的条数
+      }
       const totalBars = content.length * barsPerChar
 
-      // 计算合适的条宽度，确保至少为0.5px
-      let barWidth = Math.max(0.5, availableWidth / totalBars)
+      // 计算合适的条宽度，确保条形码清晰可见
+      let barWidth = availableWidth / totalBars
+      
+      // 确保条宽度是正整数，避免亚像素渲染模糊
+      barWidth = Math.max(1, Math.floor(barWidth))
+      
+      // 限制条宽度范围，确保条形码清晰且不过于稀疏
+      barWidth = Math.min(barWidth, 4) // 最大条宽度为4px
 
       JsBarcode(barcodeCanvas, content, {
         format: elem.barcodeType || 'CODE128',
@@ -984,7 +1005,8 @@ export default {
         textSize: textSize,
         margin: margin,
         lineColor: "#000000",
-        textMargin: marginVertical
+        textMargin: marginVertical,
+        fontSize: textSize
       })
     },
 
@@ -1677,13 +1699,19 @@ export default {
   width: 60mm;
   height: 20mm;
   display: flex;
-  justify-content: center;
   align-items: center;
   font-size: 12px;
   color: #666;
   position: relative;
   transform: rotate(var(--rotation, 0deg));
   transform-origin: center center;
+}
+
+/* 条形码canvas样式，确保填满容器 */
+.elem-barcode canvas.content {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 /* 条形码数据位置样式 */
